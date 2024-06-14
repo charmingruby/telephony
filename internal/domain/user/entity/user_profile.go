@@ -9,7 +9,6 @@ import (
 func NewUserProfile(displayName, bio string, userID int) (*UserProfile, error) {
 	profile := UserProfile{
 		ID:               core.NewDefaultDomainID(),
-		UUID:             core.NewUUID(),
 		DisplayName:      displayName,
 		Bio:              bio,
 		GuildsQuantity:   0,
@@ -27,7 +26,6 @@ func NewUserProfile(displayName, bio string, userID int) (*UserProfile, error) {
 
 type UserProfile struct {
 	ID               int        `json:"id" db:"id"`
-	UUID             string     `json:"uuid" db:"uuid"`
 	DisplayName      string     `json:"display_name" db:"display_name"`
 	Bio              string     `json:"bio" db:"bio"`
 	GuildsQuantity   int        `json:"guilds_quantity" db:"guilds_quantity"`

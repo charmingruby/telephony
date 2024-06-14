@@ -9,7 +9,6 @@ import (
 func NewUser(firstName, lastName, email, password string) (*User, error) {
 	user := User{
 		ID:           core.NewDefaultDomainID(),
-		UUID:         core.NewUUID(),
 		FirstName:    firstName,
 		LastName:     lastName,
 		Email:        email,
@@ -26,7 +25,6 @@ func NewUser(firstName, lastName, email, password string) (*User, error) {
 
 type User struct {
 	ID           int        `json:"id" db:"id"`
-	UUID         string     `json:"uuid" db:"uuid"`
 	FirstName    string     `json:"first_name" db:"first_name"`
 	LastName     string     `json:"last_name" db:"last_name"`
 	Email        string     `json:"email" db:"email"`

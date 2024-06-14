@@ -20,9 +20,9 @@ func (r *InMemoryUserRepository) Store(e *entity.User) error {
 	return nil
 }
 
-func (r *InMemoryUserRepository) FindByUUID(uuid string) (*entity.User, error) {
+func (r *InMemoryUserRepository) FindByID(id int) (*entity.User, error) {
 	for _, e := range r.Items {
-		if e.UUID == uuid {
+		if e.ID == id {
 			return &e, nil
 		}
 	}

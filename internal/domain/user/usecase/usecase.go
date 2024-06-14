@@ -1,8 +1,17 @@
 package usecase
 
-import "github.com/charmingruby/telephony/internal/domain/user/repository"
+import (
+	"github.com/charmingruby/telephony/internal/domain/user/dto"
+	"github.com/charmingruby/telephony/internal/domain/user/entity"
+	"github.com/charmingruby/telephony/internal/domain/user/repository"
+)
 
-type UserServiceContract interface{}
+type UserServiceContract interface {
+	Register(dto dto.RegisterDTO) error
+	CreateProfile(dto dto.CreateProfileDTO) error
+	CredentialsAuth(dto dto.CredentialsAuthDTO) (*credentialsAuthResponse, error)
+	GetProfileByID(id int) (*entity.UserProfile, error)
+}
 
 func NewUserService(
 	userRepo repository.UserRepository,
