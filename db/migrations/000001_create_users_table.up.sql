@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id bigserial PRIMARY KEY NOT NULL,
-    uuid varchar NOT NULL,
     first_name varchar NOT NULL,
     last_name varchar NOT NULL,
     email varchar NOT NULL,
@@ -11,16 +10,12 @@ CREATE TABLE IF NOT EXISTS users
     deleted_at timestamp
 );
 
-CREATE UNIQUE INDEX users_uuid_uindex
-    ON users (uuid);
-
 CREATE UNIQUE INDEX users_email_uindex
     ON users (email);
 
 CREATE TABLE IF NOT EXISTS users_profile 
 (
     id bigserial PRIMARY KEY NOT NULL,
-    uuid varchar NOT NULL,
     display_name varchar NOT NULL,
     bio varchar NOT NULL,
     guilds_quantity integer NOT NULL,

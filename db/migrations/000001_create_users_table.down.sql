@@ -1,4 +1,3 @@
-DROP INDEX IF EXISTS users_uuid_uindex;
 DROP INDEX IF EXISTS users_email_uindex;
 DROP INDEX IF EXISTS users_profile_display_name_uindex;
 
