@@ -12,10 +12,10 @@ import (
 	"time"
 
 	"github.com/charmingruby/telephony/internal/config"
-	"github.com/charmingruby/telephony/internal/database"
 	"github.com/charmingruby/telephony/internal/domain/example/usecase"
-	"github.com/charmingruby/telephony/internal/transport/rest"
-	"github.com/charmingruby/telephony/internal/transport/rest/endpoint"
+	"github.com/charmingruby/telephony/internal/infra/database"
+	"github.com/charmingruby/telephony/internal/infra/transport/rest"
+	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/pkg/postgres"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
