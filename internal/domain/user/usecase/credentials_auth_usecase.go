@@ -18,7 +18,8 @@ func (s *UserService) CredentialsAuth(
 		return nil, validation.NewNotFoundErr("user")
 	}
 
-	if err := crypto.ValidateHash(dto.Password, user.PasswordHash); err != nil {
+	isCredentialsValid := crypto.ValidateHash(dto.Password, user.PasswordHash)
+	if !isCredentialsValid {
 		return nil, validation.NewInvalidCredentialsErr()
 	}
 
