@@ -30,7 +30,7 @@ func (s *Suite) Test_CreateProfile() {
 		s.Equal(dummyDisplayName, s.profileRepo.Items[0].DisplayName)
 	})
 
-	s.Run("it should be not able to create a profile with an invalid userID", func() {
+	s.Run("it should be not able to create a profile with an invalid UserID", func() {
 		dto := dto.CreateProfileDTO{
 			DisplayName: dummyDisplayName,
 			Bio:         dummyBio,
