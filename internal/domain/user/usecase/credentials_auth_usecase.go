@@ -15,7 +15,7 @@ func (s *UserService) CredentialsAuth(
 ) (*credentialsAuthResponse, error) {
 	user, err := s.userRepo.FindByEmail(dto.Email)
 	if err != nil {
-		return nil, validation.NewNotFoundErr("user")
+		return nil, validation.NewInvalidCredentialsErr()
 	}
 
 	isCredentialsValid := crypto.ValidateHash(dto.Password, user.PasswordHash)
