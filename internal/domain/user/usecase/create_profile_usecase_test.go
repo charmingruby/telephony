@@ -60,4 +60,27 @@ func (s *Suite) Test_CreateProfile() {
 		s.Error(err)
 		s.Equal(validation.NewValidationErr(validation.ErrRequired("displayname")).Error(), err.Error())
 	})
+
+	s.Run("it should be not able to create a profile for a user with a profile", func() {
+		dummyUser.ID = 2
+		err := s.userRepo.Store(dummyUser)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		profile, _ := entity.NewUserProfile(dummyDisplayName, dummyBio, dummyUser.ID)
+		err = s.profileRepo.Store(profile)
+		s.NoError(err)
+		s.Equal(1, len(s.profileRepo.Items))
+
+		dto := dto.CreateProfileDTO{
+			DisplayName: dummyDisplayName + "2",
+			Bio:         dummyBio,
+			UserID:      dummyUser.ID,
+		}
+
+		err = s.userService.CreateProfile(dto)
+
+		s.Error(err)
+		s.Equal(validation.NewConflictErr("user", "profile").Error(), err.Error())
+	})
 }

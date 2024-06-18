@@ -7,9 +7,14 @@ import (
 )
 
 func (s *UserService) CreateProfile(dto dto.CreateProfileDTO) error {
-	_, err := s.userRepo.FindByID(dto.UserID)
+	user, err := s.userRepo.FindByID(dto.UserID)
 	if err != nil {
 		return validation.NewNotFoundErr("user")
+	}
+
+	_, err = s.profileRepo.FindByUserID(user.ID)
+	if err == nil {
+		return validation.NewConflictErr("user", "profile")
 	}
 
 	profile, err := entity.NewUserProfile(dto.DisplayName, dto.Bio, dto.UserID)
