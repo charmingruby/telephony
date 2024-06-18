@@ -25,6 +25,8 @@ func ValidateStruct(obj interface{}) error {
 		return NewValidationErr(ErrMaxLength(field, validationErr.Param()))
 	case "min":
 		return NewValidationErr(ErrMinLength(field, validationErr.Param()))
+	case "email":
+		return NewValidationErr(ErrFormat(field))
 	}
 
 	return nil
@@ -54,4 +56,8 @@ func ErrMinLength(field string, min string) string {
 
 func ErrMaxLength(field string, max string) string {
 	return fmt.Sprintf("%s must have a maximum of %s", field, max)
+}
+
+func ErrFormat(field string) string {
+	return fmt.Sprintf("invalid %s format", field)
 }

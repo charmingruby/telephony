@@ -43,7 +43,7 @@ func (s *Suite) Test_CreateProfile() {
 		s.Equal(validation.NewNotFoundErr("user").Error(), err.Error())
 	})
 
-	s.Run("it should be not able to create a profile with an invalid params", func() {
+	s.Run("it should be not able to create a profile with invalid payload", func() {
 		dummyUser.ID = 2
 		err := s.userRepo.Store(dummyUser)
 		s.NoError(err)
