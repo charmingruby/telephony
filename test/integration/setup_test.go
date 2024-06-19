@@ -8,11 +8,13 @@ import (
 	"testing"
 
 	"github.com/charmingruby/telephony/internal/domain/example/repository"
-	"github.com/charmingruby/telephony/internal/domain/example/usecase"
+	exampleUc "github.com/charmingruby/telephony/internal/domain/example/usecase"
+	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/test/container"
+	"github.com/charmingruby/telephony/test/fake"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -50,8 +52,22 @@ func (s *Suite) SetupTest() {
 		os.Exit(1)
 	}
 
-	exampleSvc := usecase.NewExampleService(s.exampleRepo)
-	s.handler = endpoint.NewHandler(router, exampleSvc)
+	userRepo, err := database.NewPostgresUserRepository(s.container.DB)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
+	profileRepo, err := database.NewPostgresUserProfileRepository(s.container.DB)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
+	exampleSvc := exampleUc.NewExampleService(s.exampleRepo)
+	userSvc := userUc.NewUserService(userRepo, profileRepo, fake.NewFakeCryptography())
+
+	s.handler = endpoint.NewHandler(router, exampleSvc, userSvc)
 	s.handler.Register()
 	server := rest.NewServer(router, "3000")
 

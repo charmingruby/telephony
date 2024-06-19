@@ -12,11 +12,13 @@ import (
 	"time"
 
 	"github.com/charmingruby/telephony/internal/config"
-	"github.com/charmingruby/telephony/internal/domain/example/usecase"
+	exampleUc "github.com/charmingruby/telephony/internal/domain/example/usecase"
+	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/pkg/postgres"
+	"github.com/charmingruby/telephony/test/fake"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -74,25 +76,28 @@ func main() {
 }
 
 func initDependencies(db *sqlx.DB, router *gin.Engine) {
+	// TODO: remove when is finished
 	exampleRepo, err := database.NewPostgresExampleRepository(db)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
 		os.Exit(1)
 	}
 
-	_, err = database.NewPostgresUserRepository(db)
+	userRepo, err := database.NewPostgresUserRepository(db)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
 		os.Exit(1)
 	}
 
-	_, err = database.NewPostgresUserProfileRepository(db)
+	profileRepo, err := database.NewPostgresUserProfileRepository(db)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
 		os.Exit(1)
 	}
 
-	exampleSvc := usecase.NewExampleService(exampleRepo)
+	// TODO: remove when is finished
+	exampleSvc := exampleUc.NewExampleService(exampleRepo)
+	userSvc := userUc.NewUserService(userRepo, profileRepo, fake.NewFakeCryptography())
 
-	endpoint.NewHandler(router, exampleSvc).Register()
+	endpoint.NewHandler(router, exampleSvc, userSvc).Register()
 }

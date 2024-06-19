@@ -4,11 +4,10 @@ import (
 	"github.com/charmingruby/telephony/internal/domain/user/dto"
 	"github.com/charmingruby/telephony/internal/domain/user/entity"
 	"github.com/charmingruby/telephony/internal/validation"
-	"github.com/charmingruby/telephony/test/fake"
 )
 
 func (s *Suite) Test_CredentialsAuth() {
-	fakeCrypto := fake.NewFakeCryptography()
+	fakeCrypto := s.userService.crypto
 	dummyEmail := "dummy@email.com"
 	dummyPassword := "password123"
 	passwordHash, _ := fakeCrypto.GenerateHash(dummyPassword)
@@ -25,7 +24,7 @@ func (s *Suite) Test_CredentialsAuth() {
 			Password: dummyPassword,
 		}
 
-		data, err := s.userService.CredentialsAuth(dto, fakeCrypto)
+		data, err := s.userService.CredentialsAuth(dto)
 
 		s.NoError(err)
 		s.Equal(dummyUser.ID, data.UserID)
@@ -37,7 +36,7 @@ func (s *Suite) Test_CredentialsAuth() {
 			Password: dummyPassword,
 		}
 
-		data, err := s.userService.CredentialsAuth(dto, fakeCrypto)
+		data, err := s.userService.CredentialsAuth(dto)
 
 		s.Nil(data)
 		s.Error(err)
@@ -55,7 +54,7 @@ func (s *Suite) Test_CredentialsAuth() {
 			Password: dummyPassword + "2",
 		}
 
-		data, err := s.userService.CredentialsAuth(dto, fakeCrypto)
+		data, err := s.userService.CredentialsAuth(dto)
 
 		s.Nil(data)
 		s.Error(err)

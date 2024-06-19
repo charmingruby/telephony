@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/charmingruby/telephony/internal/domain/user/entity"
+	"github.com/charmingruby/telephony/test/fake"
 	"github.com/charmingruby/telephony/test/inmemory"
 	"github.com/stretchr/testify/suite"
 )
@@ -16,9 +17,10 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
+	fakeCrypto := fake.NewFakeCryptography()
 	s.userRepo = inmemory.NewInMemoryUserRepository()
 	s.profileRepo = inmemory.NewInMemoryUserProfileRepository()
-	s.userService = NewUserService(s.userRepo, s.profileRepo)
+	s.userService = NewUserService(s.userRepo, s.profileRepo, fakeCrypto)
 }
 
 func (s *Suite) SetupTest() {
