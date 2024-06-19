@@ -80,6 +80,18 @@ func initDependencies(db *sqlx.DB, router *gin.Engine) {
 		os.Exit(1)
 	}
 
+	_, err = database.NewPostgresUserRepository(db)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
+	_, err = database.NewPostgresUserProfileRepository(db)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
 	exampleSvc := usecase.NewExampleService(exampleRepo)
 
 	endpoint.NewHandler(router, exampleSvc).Register()
