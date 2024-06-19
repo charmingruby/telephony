@@ -11,10 +11,10 @@ import (
 	exampleUc "github.com/charmingruby/telephony/internal/domain/example/usecase"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
+	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/test/container"
-	"github.com/charmingruby/telephony/test/fake"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -65,7 +65,7 @@ func (s *Suite) SetupTest() {
 	}
 
 	exampleSvc := exampleUc.NewExampleService(s.exampleRepo)
-	userSvc := userUc.NewUserService(userRepo, profileRepo, fake.NewFakeCryptography())
+	userSvc := userUc.NewUserService(userRepo, profileRepo, cryptography.NewCryptography())
 
 	s.handler = endpoint.NewHandler(router, exampleSvc, userSvc)
 	s.handler.Register()
