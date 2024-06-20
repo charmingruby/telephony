@@ -14,6 +14,8 @@ type environment struct {
 	DatabaseSSL      string `env:"DATABASE_SSL,required"`
 	ServerPort       string `env:"SERVER_PORT,required"`
 	ServerHost       string `env:"SERVER_HOST,required"`
+	JWTSecretKey     string `env:"JWT_SECRET_KEY,required"`
+	JWTIssuer        string `env:"JWT_ISSUER,required"`
 }
 
 func NewConfig() (*Config, error) {
@@ -37,6 +39,10 @@ func NewConfig() (*Config, error) {
 			Port: environment.ServerPort,
 			Host: environment.ServerHost,
 		},
+		JWTConfig: &jwtConfig{
+			SecretKey: environment.JWTSecretKey,
+			Issuer:    environment.JWTIssuer,
+		},
 	}
 
 	return &cfg, nil
@@ -45,6 +51,7 @@ func NewConfig() (*Config, error) {
 type Config struct {
 	DatabaseConfig *databaseConfig
 	ServerConfig   *serverConfig
+	JWTConfig      *jwtConfig
 }
 
 type databaseConfig struct {
@@ -58,4 +65,9 @@ type databaseConfig struct {
 type serverConfig struct {
 	Port string
 	Host string
+}
+
+type jwtConfig struct {
+	SecretKey string
+	Issuer    string
 }

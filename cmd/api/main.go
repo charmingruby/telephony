@@ -95,9 +95,11 @@ func initDependencies(db *sqlx.DB, router *gin.Engine) {
 		os.Exit(1)
 	}
 
+	crypto := cryptography.NewCryptography()
+
 	// TODO: remove when is finished
 	exampleSvc := exampleUc.NewExampleService(exampleRepo)
-	userSvc := userUc.NewUserService(userRepo, profileRepo, cryptography.NewCryptography())
+	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
 
 	endpoint.NewHandler(router, exampleSvc, userSvc).Register()
 }
