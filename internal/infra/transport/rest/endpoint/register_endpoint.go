@@ -7,39 +7,53 @@ import (
 )
 
 type RegisterRequest struct {
-	Name string `json:"name" binding:"required"`
+	FirstName string `json:"first_name" binding:"required"`
+	LastName  string `json:"last_name" binding:"required"`
+	Email     string `json:"email" binding:"required"`
+	Password  string `json:"password" binding:"required"`
 }
 
 // Register godoc
 //
-//	@Summary		Create example
-//	@Description	Create a new example
-//	@Tags			Examples
+//	@Summary		Create user
+//	@Description	Create a new user
+//	@Tags			Users
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		RegisterRequest	true	"Add Example"
+//	@Param			request	body		RegisterRequest	true	"Add User"
 //	@Success		201		{object}	Response
 //	@Failure		400		{object}	Response
 //	@Failure		500		{object}	Response
-//	@Router			/examples [post]
-func (h *Handler) RegisterEndpoint(c *gin.Context) {
+//	@Router			/auth/register [post]
+func (h *Handler) registerEndpoint(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		newPayloadError(c, err)
 		return
 	}
 
-	dto := dto.RegisterDTO{}
+	dto := dto.RegisterDTO{
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Email:     req.Email,
+		Password:  req.Password,
+	}
 
 	if err := h.userService.Register(dto); err != nil {
 		validationErr, ok := err.(*validation.ErrValidation)
 		if ok {
-			newBadRequestError(c, validationErr)
+			newEntityError(c, validationErr)
+			return
+		}
+
+		conflictErr, ok := err.(*validation.ErrConflict)
+		if ok {
+			newConflicError(c, conflictErr)
 			return
 		}
 
 		newInternalServerError(c, err)
 		return
 	}
-	newCreatedResponse(c, "example")
+	newCreatedResponse(c, "user")
 }

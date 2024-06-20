@@ -38,7 +38,7 @@ func (s *Suite) Test_CreateExampleEndpoint() {
 		defer res.Body.Close()
 
 		data := errorResponse{}
-		err = parseRequest(&data, res.Body)
+		err = parsePayload(&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.ErrMinLength("name", "3"), data.Message)

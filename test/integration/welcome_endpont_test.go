@@ -17,7 +17,7 @@ func (s *Suite) Test_WelcomeEndpoint() {
 		defer res.Body.Close()
 
 		data := welcomeResponse{}
-		err = parseRequest(&data, res.Body)
+		err = parsePayload(&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("OK!", data.Message)

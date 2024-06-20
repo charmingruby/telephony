@@ -29,7 +29,7 @@ func (s *Suite) Test_GetExampleEndpoint() {
 		defer res.Body.Close()
 
 		data := getExampleResponse{}
-		err = parseRequest(&data, res.Body)
+		err = parsePayload(&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("example found", data.Message)
@@ -45,7 +45,7 @@ func (s *Suite) Test_GetExampleEndpoint() {
 		defer res.Body.Close()
 
 		data := getExampleResponse{}
-		err = parseRequest(&data, res.Body)
+		err = parsePayload(&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("example").Error(), data.Message)

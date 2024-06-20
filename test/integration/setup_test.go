@@ -41,7 +41,21 @@ func (s *Suite) TearDownSuite() {
 	s.container.DB.Close()
 }
 
-func (s *Suite) SetupTest() {
+func (s *Suite) SetupSubTest() {
+	s.setupDependencies()
+}
+
+func (s *Suite) TearDownSubTest() {
+	err := s.container.RollbackMigrations()
+	s.NoError(err)
+	s.server.Close()
+}
+
+func (s *Suite) Route(path string) string {
+	return fmt.Sprintf("%s/api%s", s.server.URL, path)
+}
+
+func (s *Suite) setupDependencies() {
 	err := s.container.RunMigrations()
 	assert.NoError(s.T(), err)
 
@@ -72,17 +86,6 @@ func (s *Suite) SetupTest() {
 	server := rest.NewServer(router, "3000")
 
 	s.server = httptest.NewServer(server.Router)
-}
-
-func (s *Suite) TearDownTest() {
-	err := s.container.RollbackMigrations()
-	assert.NoError(s.T(), err)
-
-	s.server.Close()
-}
-
-func (s *Suite) Route(path string) string {
-	return fmt.Sprintf("%s/api%s", s.server.URL, path)
 }
 
 func TestSuite(t *testing.T) {

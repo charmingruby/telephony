@@ -15,7 +15,7 @@ func readBody(res *http.Response) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-func parseRequest[T any](r *T, body io.ReadCloser) error {
+func parsePayload[T any](r *T, body io.ReadCloser) error {
 	if err := json.NewDecoder(body).Decode(&r); err != nil {
 		return err
 	}

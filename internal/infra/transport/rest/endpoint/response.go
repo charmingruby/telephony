@@ -38,6 +38,13 @@ func newBadRequestError(c *gin.Context, err error) {
 	newResponse(c, http.StatusBadRequest, nil, err.Error())
 }
 
+func newConflicError(c *gin.Context, err error) {
+	newResponse(c, http.StatusConflict, nil, err.Error())
+}
+func newEntityError(c *gin.Context, err error) {
+	newResponse(c, http.StatusUnprocessableEntity, nil, err.Error())
+}
+
 func newResourceNotFoundError(c *gin.Context, err error) {
 	newResponse(c, http.StatusNotFound, nil, err.Error())
 }

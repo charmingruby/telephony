@@ -37,7 +37,7 @@ func (h *Handler) Register() {
 		v1.POST("/examples", h.CreateExampleEndpoint)
 		v1.GET("/examples/:id", h.getExampleEndpoint)
 
-		v1.POST("/auth/register")
+		v1.POST("/auth/register", h.registerEndpoint)
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
