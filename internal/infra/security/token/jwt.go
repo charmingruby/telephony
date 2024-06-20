@@ -46,27 +46,14 @@ func (j *JWTService) GenerateToken(userID int) (string, error) {
 	return tokenStr, nil
 }
 
-func (j *JWTService) ValidateToken(token string) bool {
-	_, err := jwt.Parse(token, j.isTokenValid)
-	return err == nil
-}
-
-func (j *JWTService) isTokenValid(t *jwt.Token) (interface{}, error) {
-	if _, isValid := t.Method.(*jwt.SigningMethodHMAC); !isValid {
-		return nil, fmt.Errorf("invalid token %v", t)
-	}
-
-	return []byte(j.secretKey), nil
-}
-
 type Payload struct {
 	UserID int `json:"user_id"`
 }
 
-func (j *JWTService) RetriveTokenPayload(token string) (*Payload, error) {
+func (j *JWTService) ValidateToken(token string) (*Payload, error) {
 	t, err := jwt.Parse(token, j.isTokenValid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid token")
 	}
 
 	claims, ok := t.Claims.(jwt.MapClaims)
@@ -86,4 +73,12 @@ func (j *JWTService) RetriveTokenPayload(token string) (*Payload, error) {
 	}
 
 	return payload, err
+}
+
+func (j *JWTService) isTokenValid(t *jwt.Token) (interface{}, error) {
+	if _, isValid := t.Method.(*jwt.SigningMethodHMAC); !isValid {
+		return nil, fmt.Errorf("invalid token %v", t)
+	}
+
+	return []byte(j.secretKey), nil
 }

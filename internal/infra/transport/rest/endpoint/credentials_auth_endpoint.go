@@ -37,7 +37,7 @@ type CredentialsAuthResponse struct {
 func (h *Handler) credentialsAuthEndpoint(c *gin.Context) {
 	var req CredentialsAuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		newPayloadError(c, err)
+		NewPayloadError(c, err)
 		return
 	}
 
@@ -50,17 +50,17 @@ func (h *Handler) credentialsAuthEndpoint(c *gin.Context) {
 	if err != nil {
 		invalidCredentialsErr, ok := err.(*validation.ErrInvalidCredentials)
 		if ok {
-			newInvalidCredentialsError(c, invalidCredentialsErr)
+			NewInvalidCredentialsError(c, invalidCredentialsErr)
 			return
 		}
 
-		newInternalServerError(c, err)
+		NewInternalServerError(c, err)
 		return
 	}
 
 	token, err := h.token.GenerateToken(res.UserID)
 	if err != nil {
-		newInternalServerError(c, err)
+		NewInternalServerError(c, err)
 		return
 	}
 
@@ -68,5 +68,5 @@ func (h *Handler) credentialsAuthEndpoint(c *gin.Context) {
 		AccessToken: token,
 	}
 
-	newOkResponse(c, "user authenticated successfully", data)
+	NewOkResponse(c, "user authenticated successfully", data)
 }

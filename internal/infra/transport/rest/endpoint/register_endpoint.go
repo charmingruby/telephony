@@ -16,7 +16,7 @@ type RegisterRequest struct {
 // Register godoc
 //
 //	@Summary		Create user
-//	@Description	Create a new user
+//	@Description	Create a New user
 //	@Tags			Users
 //	@Accept			json
 //	@Produce		json
@@ -29,7 +29,7 @@ type RegisterRequest struct {
 func (h *Handler) registerEndpoint(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		newPayloadError(c, err)
+		NewPayloadError(c, err)
 		return
 	}
 
@@ -43,18 +43,18 @@ func (h *Handler) registerEndpoint(c *gin.Context) {
 	if err := h.userService.Register(dto); err != nil {
 		validationErr, ok := err.(*validation.ErrValidation)
 		if ok {
-			newEntityError(c, validationErr)
+			NewEntityError(c, validationErr)
 			return
 		}
 
 		conflictErr, ok := err.(*validation.ErrConflict)
 		if ok {
-			newConflicError(c, conflictErr)
+			NewConflicError(c, conflictErr)
 			return
 		}
 
-		newInternalServerError(c, err)
+		NewInternalServerError(c, err)
 		return
 	}
-	newCreatedResponse(c, "user")
+	NewCreatedResponse(c, "user")
 }

@@ -29,9 +29,9 @@ type Handler struct {
 
 func (h *Handler) Register() {
 	basePath := "/api/v1"
+	docs.SwaggerInfo.BasePath = basePath
 
 	v1 := h.router.Group(basePath)
-	docs.SwaggerInfo.BasePath = basePath
 	{
 		v1.GET("/welcome", welcomeEndpoint)
 

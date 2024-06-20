@@ -47,7 +47,7 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 
 		// validate token payload
 		token := data.Data.AccessToken
-		tokenPayload, err := s.token.RetriveTokenPayload(token)
+		tokenPayload, err := s.token.ValidateToken(token)
 		s.NoError(err)
 		s.Equal(user.ID, tokenPayload.UserID)
 	})
