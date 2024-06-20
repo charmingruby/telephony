@@ -6,12 +6,15 @@ Content-Type: application/json
 
 ###
 
-# @name create_example
-POST {{baseUrl}}/examples
+# @name register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-    "name": "dummy example"
+    "first_name": "dummy example",
+    "last_name": "dummy example",
+    "email": "dummy@email.com",
+    "password": "password123"
 }
 
 ###

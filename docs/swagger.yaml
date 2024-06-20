@@ -1,5 +1,29 @@
 basePath: /api/v1
 definitions:
+  endpoint.CredentialsAuthData:
+    properties:
+      access_token:
+        type: string
+    type: object
+  endpoint.CredentialsAuthRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  endpoint.CredentialsAuthResponse:
+    properties:
+      data:
+        $ref: '#/definitions/endpoint.CredentialsAuthData'
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
   endpoint.RegisterRequest:
     properties:
       email:
@@ -37,6 +61,40 @@ info:
   title: Telephony
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates an user
+      parameters:
+      - description: Credentials Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.CredentialsAuthRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/endpoint.CredentialsAuthResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Authenticates an user
+      tags:
+      - Users
   /auth/register:
     post:
       consumes:

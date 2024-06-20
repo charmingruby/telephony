@@ -8,11 +8,6 @@ import (
 )
 
 func (s *Suite) Test_RegisterEndpoint() {
-	type registerResponse struct {
-		Code    int    `json:"status_code"`
-		Message string `json:"message"`
-	}
-
 	s.Run("it should be able to register a new user", func() {
 		payload := endpoint.RegisterRequest{
 			FirstName: "dummy firstname",
@@ -29,8 +24,8 @@ func (s *Suite) Test_RegisterEndpoint() {
 
 		s.Equal(http.StatusCreated, res.StatusCode)
 
-		var data registerResponse
-		err = parsePayload[registerResponse](&data, res.Body)
+		var data endpoint.Response
+		err = parsePayload[endpoint.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("user created successfully", data.Message)
@@ -53,8 +48,8 @@ func (s *Suite) Test_RegisterEndpoint() {
 
 		s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
 
-		var data registerResponse
-		err = parsePayload[registerResponse](&data, res.Body)
+		var data endpoint.Response
+		err = parsePayload[endpoint.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("invalid email format", data.Message)
@@ -72,8 +67,8 @@ func (s *Suite) Test_RegisterEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data registerResponse
-		err = parsePayload[registerResponse](&data, res.Body)
+		var data endpoint.Response
+		err = parsePayload[endpoint.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, data.Code)

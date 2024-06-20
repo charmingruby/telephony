@@ -75,10 +75,14 @@ func (j *JWTService) RetriveTokenPayload(token string) (*Payload, error) {
 		return nil, fmt.Errorf("unable to parse jwt claims")
 	}
 
-	userID := claims["sub"].(int)
+	userIDStr := claims["sub"].(string)
+	userIDParsed, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse user_id")
+	}
 
 	payload := &Payload{
-		UserID: userID,
+		UserID: userIDParsed,
 	}
 
 	return payload, err

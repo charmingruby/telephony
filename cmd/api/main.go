@@ -15,6 +15,7 @@ import (
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
+	"github.com/charmingruby/telephony/internal/infra/security/token"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/pkg/postgres"
@@ -45,7 +46,7 @@ func main() {
 
 	router := gin.Default()
 
-	initDependencies(db, router)
+	initDependencies(cfg, db, router)
 
 	server := rest.NewServer(router, cfg.ServerConfig.Port)
 
@@ -74,7 +75,7 @@ func main() {
 	slog.Info("Gracefully shutdown!")
 }
 
-func initDependencies(db *sqlx.DB, router *gin.Engine) {
+func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 	userRepo, err := database.NewPostgresUserRepository(db)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
@@ -91,5 +92,7 @@ func initDependencies(db *sqlx.DB, router *gin.Engine) {
 
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
 
-	endpoint.NewHandler(router, userSvc).Register()
+	token := token.NewJWTService(cfg.JWTConfig.SecretKey, cfg.JWTConfig.Issuer)
+
+	endpoint.NewHandler(router, token, userSvc).Register()
 }

@@ -37,6 +37,9 @@ func newPayloadError(c *gin.Context, err error) {
 func newBadRequestError(c *gin.Context, err error) {
 	newResponse(c, http.StatusBadRequest, nil, err.Error())
 }
+func newInvalidCredentialsError(c *gin.Context, err error) {
+	newResponse(c, http.StatusUnauthorized, nil, err.Error())
+}
 
 func newConflicError(c *gin.Context, err error) {
 	newResponse(c, http.StatusConflict, nil, err.Error())
