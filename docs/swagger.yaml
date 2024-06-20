@@ -99,7 +99,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new user
+      description: Create a New user
       parameters:
       - description: Create User Payload
         in: body
@@ -142,4 +142,12 @@ paths:
       summary: Welcome
       tags:
       - Health
+securityDefinitions:
+  ApiKeyAuth:
+    description: Description for what is this security definition being used
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
 swagger: "2.0"

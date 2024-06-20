@@ -13,3 +13,10 @@ package internal
 
 //	@host		localhost:3000
 //	@BasePath	/api/v1
+
+// @securityDefinitions.basic  BasicAuth
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
+// @description					Description for what is this security definition being used
