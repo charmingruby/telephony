@@ -23,9 +23,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/examples": {
+        "/auth/register": {
             "post": {
-                "description": "Create a new example",
+                "description": "Create a new user",
                 "consumes": [
                     "application/json"
                 ],
@@ -33,17 +33,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Examples"
+                    "Users"
                 ],
-                "summary": "Create example",
+                "summary": "Create user",
                 "parameters": [
                     {
-                        "description": "Add Example",
+                        "description": "Create User Payload",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/endpoint.CreateExampleRequest"
+                            "$ref": "#/definitions/endpoint.RegisterRequest"
                         }
                     }
                 ],
@@ -54,52 +54,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/endpoint.Response"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/endpoint.Response"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/examples/{id}": {
-            "get": {
-                "description": "Find an example",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Examples"
-                ],
-                "summary": "Get example",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Example UUID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/endpoint.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/endpoint.Response"
                         }
@@ -135,13 +97,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "endpoint.CreateExampleRequest": {
+        "endpoint.RegisterRequest": {
             "type": "object",
             "required": [
-                "name"
+                "email",
+                "first_name",
+                "last_name",
+                "password"
             ],
             "properties": {
-                "name": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

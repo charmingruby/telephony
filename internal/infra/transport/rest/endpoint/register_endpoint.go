@@ -20,9 +20,10 @@ type RegisterRequest struct {
 //	@Tags			Users
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		RegisterRequest	true	"Add User"
+//	@Param			request	body		RegisterRequest	true	"Create User Payload"
 //	@Success		201		{object}	Response
-//	@Failure		400		{object}	Response
+//	@Failure		422		{object}	Response
+//	@Failure		409		{object}	Response
 //	@Failure		500		{object}	Response
 //	@Router			/auth/register [post]
 func (h *Handler) registerEndpoint(c *gin.Context) {

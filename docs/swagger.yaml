@@ -1,11 +1,20 @@
 basePath: /api/v1
 definitions:
-  endpoint.CreateExampleRequest:
+  endpoint.RegisterRequest:
     properties:
-      name:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
         type: string
     required:
-    - name
+    - email
+    - first_name
+    - last_name
+    - password
     type: object
   endpoint.Response:
     properties:
@@ -28,18 +37,18 @@ info:
   title: Telephony
   version: "1.0"
 paths:
-  /examples:
+  /auth/register:
     post:
       consumes:
       - application/json
-      description: Create a new example
+      description: Create a new user
       parameters:
-      - description: Add Example
+      - description: Create User Payload
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/endpoint.CreateExampleRequest'
+          $ref: '#/definitions/endpoint.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -47,46 +56,21 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/endpoint.Response'
-        "400":
-          description: Bad Request
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "422":
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/endpoint.Response'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/endpoint.Response'
-      summary: Create example
+      summary: Create user
       tags:
-      - Examples
-  /examples/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Find an example
-      parameters:
-      - description: Example UUID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/endpoint.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/endpoint.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/endpoint.Response'
-      summary: Get example
-      tags:
-      - Examples
+      - Users
   /welcome:
     get:
       description: Health Check
