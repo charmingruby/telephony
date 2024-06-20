@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/charmingruby/telephony/internal/config"
-	exampleUc "github.com/charmingruby/telephony/internal/domain/example/usecase"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
@@ -76,13 +75,6 @@ func main() {
 }
 
 func initDependencies(db *sqlx.DB, router *gin.Engine) {
-	// TODO: remove when is finished
-	exampleRepo, err := database.NewPostgresExampleRepository(db)
-	if err != nil {
-		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
-		os.Exit(1)
-	}
-
 	userRepo, err := database.NewPostgresUserRepository(db)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
@@ -97,9 +89,7 @@ func initDependencies(db *sqlx.DB, router *gin.Engine) {
 
 	crypto := cryptography.NewCryptography()
 
-	// TODO: remove when is finished
-	exampleSvc := exampleUc.NewExampleService(exampleRepo)
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
 
-	endpoint.NewHandler(router, exampleSvc, userSvc).Register()
+	endpoint.NewHandler(router, userSvc).Register()
 }

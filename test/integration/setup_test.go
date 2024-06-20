@@ -7,8 +7,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/charmingruby/telephony/internal/domain/example/repository"
-	exampleUc "github.com/charmingruby/telephony/internal/domain/example/usecase"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
@@ -26,10 +24,9 @@ const (
 
 type Suite struct {
 	suite.Suite
-	container   *container.TestDatabase
-	server      *httptest.Server
-	handler     *endpoint.Handler
-	exampleRepo repository.ExampleRepository
+	container *container.TestDatabase
+	server    *httptest.Server
+	handler   *endpoint.Handler
 }
 
 func (s *Suite) SetupSuite() {
@@ -60,11 +57,6 @@ func (s *Suite) setupDependencies() {
 	assert.NoError(s.T(), err)
 
 	router := gin.Default()
-	s.exampleRepo, err = database.NewPostgresExampleRepository(s.container.DB)
-	if err != nil {
-		slog.Error(fmt.Sprintf("INTEGRATION TEST, DATABASE REPOSITORY: %s", err.Error()))
-		os.Exit(1)
-	}
 
 	userRepo, err := database.NewPostgresUserRepository(s.container.DB)
 	if err != nil {
@@ -78,10 +70,9 @@ func (s *Suite) setupDependencies() {
 		os.Exit(1)
 	}
 
-	exampleSvc := exampleUc.NewExampleService(s.exampleRepo)
 	userSvc := userUc.NewUserService(userRepo, profileRepo, cryptography.NewCryptography())
 
-	s.handler = endpoint.NewHandler(router, exampleSvc, userSvc)
+	s.handler = endpoint.NewHandler(router, userSvc)
 	s.handler.Register()
 	server := rest.NewServer(router, "3000")
 
