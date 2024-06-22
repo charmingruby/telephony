@@ -22,6 +22,7 @@ func Test_NewGuild(t *testing.T) {
 		assert.Equal(t, name, g.Name)
 		assert.Equal(t, description, g.Description)
 		assert.Equal(t, tags, g.Tags)
+		assert.Equal(t, 0, g.ChannelsQuantity)
 		assert.Equal(t, ownerID, g.OwnerID)
 		assert.Nil(t, g.DeletedAt)
 	})
