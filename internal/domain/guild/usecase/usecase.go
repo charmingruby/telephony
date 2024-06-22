@@ -4,8 +4,8 @@ import (
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
-	"github.com/charmingruby/telephony/internal/domain/user/adapter"
-	"github.com/charmingruby/telephony/internal/domain/user/repository"
+	"github.com/charmingruby/telephony/internal/domain/guild/repository"
+	"github.com/charmingruby/telephony/internal/shared/client"
 )
 
 type GuildServiceContract interface {
@@ -15,11 +15,16 @@ type GuildServiceContract interface {
 }
 
 func NewGuildService(
-	userRepo repository.UserRepository,
-	profileRepo repository.UserProfileRepository,
-	crypto adapter.CryptographyContract,
+	guildRepo repository.GuildRepository,
+	userCliet client.UserClient,
 ) *GuildService {
-	return &GuildService{}
+	return &GuildService{
+		guildRepo: guildRepo,
+		userCliet: userCliet,
+	}
 }
 
-type GuildService struct{}
+type GuildService struct {
+	guildRepo repository.GuildRepository
+	userCliet client.UserClient
+}
