@@ -46,6 +46,20 @@ func (e *ErrInvalidCredentials) Error() string {
 	return e.Message
 }
 
+func NewUnauthorizedErr() error {
+	return &ErrUnathorized{
+		Message: "user don't have necessary permissions to do this action",
+	}
+}
+
+type ErrUnathorized struct {
+	Message string `json:"message"`
+}
+
+func (e *ErrUnathorized) Error() string {
+	return e.Message
+}
+
 func NewConflictErr(entity, field string) error {
 	return &ErrConflict{
 		Message: fmt.Sprintf("%s %s already taken", entity, field),
