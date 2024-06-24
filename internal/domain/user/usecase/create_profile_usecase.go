@@ -27,7 +27,7 @@ func (s *UserService) CreateProfile(dto dto.CreateProfileDTO) error {
 		return err
 	}
 
-	if err := s.profileRepo.Store(profile); err != nil {
+	if _, err := s.profileRepo.Store(profile); err != nil {
 		return validation.NewInternalErr()
 	}
 

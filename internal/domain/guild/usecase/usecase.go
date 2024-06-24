@@ -5,7 +5,7 @@ import (
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/charmingruby/telephony/internal/domain/guild/repository"
-	"github.com/charmingruby/telephony/internal/shared/client"
+	"github.com/charmingruby/telephony/internal/domain/shared/client"
 )
 
 type GuildServiceContract interface {

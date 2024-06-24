@@ -23,7 +23,7 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 	user.PasswordHash = passwordHash
 
 	s.Run("it should be able to authenticate with valid credentials", func() {
-		err := s.userRepo.Store(user)
+		_, err := s.userRepo.Store(user)
 		s.NoError(err)
 
 		payload := endpoint.CredentialsAuthRequest{
@@ -53,7 +53,7 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 	})
 
 	s.Run("it should be not able to authenticate with invalid email", func() {
-		err := s.userRepo.Store(user)
+		_, err := s.userRepo.Store(user)
 		s.NoError(err)
 
 		payload := endpoint.CredentialsAuthRequest{
@@ -77,7 +77,7 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 	})
 
 	s.Run("it should be not able to authenticate with invalid password", func() {
-		err := s.userRepo.Store(user)
+		_, err := s.userRepo.Store(user)
 		s.NoError(err)
 
 		payload := endpoint.CredentialsAuthRequest{
@@ -101,7 +101,7 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 	})
 
 	s.Run("it should be not able to authenticate with invalid payload", func() {
-		err := s.userRepo.Store(user)
+		_, err := s.userRepo.Store(user)
 		s.NoError(err)
 
 		payload := endpoint.CredentialsAuthRequest{}

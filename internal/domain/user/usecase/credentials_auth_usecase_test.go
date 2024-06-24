@@ -15,7 +15,7 @@ func (s *Suite) Test_CredentialsAuth() {
 
 	s.Run("it should be able to authenticate", func() {
 		dummyUser.ID = 2
-		err := s.userRepo.Store(dummyUser)
+		_, err := s.userRepo.Store(dummyUser)
 		s.NoError(err)
 		s.Equal(1, len(s.userRepo.Items))
 
@@ -45,7 +45,7 @@ func (s *Suite) Test_CredentialsAuth() {
 
 	s.Run("it should be not able to authenticate with unmatching password", func() {
 		dummyUser.ID = 2
-		err := s.userRepo.Store(dummyUser)
+		_, err := s.userRepo.Store(dummyUser)
 		s.NoError(err)
 		s.Equal(1, len(s.userRepo.Items))
 

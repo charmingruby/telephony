@@ -24,7 +24,7 @@ func (s *Suite) Test_Register() {
 	})
 
 	s.Run("it should be not able to register with conflicting email", func() {
-		err := s.userRepo.Store(user)
+		_, err := s.userRepo.Store(user)
 		s.NoError(err)
 
 		err = s.userService.Register(dto)

@@ -26,15 +26,12 @@ func createSampleUser(
 		return nil, err
 	}
 
-	if err := userRepo.Store(user); err != nil {
-		return nil, err
-	}
-
-	userPersisted, err := userRepo.FindByEmail(user.Email)
+	id, err := userRepo.Store(user)
 	if err != nil {
 		return nil, err
 	}
-	user.ID = userPersisted.ID
+
+	user.ID = id
 
 	return user, nil
 }
@@ -53,9 +50,12 @@ func createSampleUserProfile(
 		return nil, err
 	}
 
-	if err := profileRepo.Store(profile); err != nil {
+	id, err := profileRepo.Store(profile)
+	if err != nil {
 		return nil, err
 	}
+
+	profile.ID = id
 
 	return profile, nil
 }

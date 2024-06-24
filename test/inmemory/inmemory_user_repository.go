@@ -15,9 +15,9 @@ type InMemoryUserRepository struct {
 	Items []entity.User
 }
 
-func (r *InMemoryUserRepository) Store(e *entity.User) error {
+func (r *InMemoryUserRepository) Store(e *entity.User) (int, error) {
 	r.Items = append(r.Items, *e)
-	return nil
+	return e.ID, nil
 }
 
 func (r *InMemoryUserRepository) FindByID(id int) (*entity.User, error) {

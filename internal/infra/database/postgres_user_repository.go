@@ -31,7 +31,7 @@ func NewPostgresUserRepository(db *sqlx.DB) (*PostgresUserRepository, error) {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
 			return nil,
-				newPreparationErr(queryName, "user", err)
+				NewPreparationErr(queryName, "user", err)
 		}
 
 		stmts[queryName] = stmt
@@ -53,28 +53,30 @@ func (r *PostgresUserRepository) statement(queryName string) (*sqlx.Stmt, error)
 
 	if !ok {
 		return nil,
-			newStatementNotPreparedErr(queryName, "user")
+			NewStatementNotPreparedErr(queryName, "user")
 	}
 
 	return stmt, nil
 }
 
-func (r *PostgresUserRepository) Store(u *entity.User) error {
+func (r *PostgresUserRepository) Store(u *entity.User) (int, error) {
 	stmt, err := r.statement(createUser)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
-	if _, err := stmt.Exec(
+	var result entity.User
+	if err := stmt.Get(
+		&result,
 		u.FirstName,
 		u.LastName,
 		u.Email,
 		u.PasswordHash,
 	); err != nil {
-		return err
+		return -1, err
 	}
 
-	return nil
+	return result.ID, nil
 }
 
 func (r *PostgresUserRepository) FindByID(id int) (*entity.User, error) {

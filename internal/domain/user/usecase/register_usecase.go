@@ -27,7 +27,7 @@ func (s *UserService) Register(dto dto.RegisterDTO) error {
 	}
 	user.PasswordHash = passwordHash
 
-	if err := s.userRepo.Store(user); err != nil {
+	if _, err := s.userRepo.Store(user); err != nil {
 		return validation.NewInternalErr()
 	}
 

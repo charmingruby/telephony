@@ -11,9 +11,9 @@ func (s *Suite) Test_GetProfileByID() {
 	profile, _ := entity.NewUserProfile("dummy_nick", "dummy bio", user.ID)
 
 	s.Run("it should be able to get a profile", func() {
-		err := s.userRepo.Store(user)
+		_, err := s.userRepo.Store(user)
 		s.NoError(err)
-		err = s.profileRepo.Store(profile)
+		_, err = s.profileRepo.Store(profile)
 		s.NoError(err)
 
 		p, err := s.userService.GetProfileByID(user.ID)
