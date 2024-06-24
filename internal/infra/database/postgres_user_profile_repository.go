@@ -6,9 +6,12 @@ import (
 )
 
 const (
-	createUserProfile            = "create user profile"
-	findUserProfileByUserID      = "find user profile by user id"
-	findUserProfileByDisplayName = "find user profile by display name"
+	createUserProfile                 = "create user profile"
+	findUserProfileByID               = "find user profile by id"
+	findUserProfileByUserID           = "find user profile by user id"
+	findUserProfileByDisplayName      = "find user profile by display name"
+	updateUserProfileGuildsQuantity   = "update user profile guilds quantity"
+	updateUserProfileMessagesQuantity = "update user profile messages quantity"
 )
 
 func userProfileQueries() map[string]string {
@@ -17,10 +20,20 @@ func userProfileQueries() map[string]string {
 		(display_name, bio, guilds_quantity, messages_quantity, user_id)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING *`,
+		findUserProfileByID: `SELECT * FROM users_profile 
+		WHERE id = $1`,
 		findUserProfileByUserID: `SELECT * FROM users_profile 
 		WHERE user_id = $1`,
 		findUserProfileByDisplayName: `SELECT * FROM users_profile 
 		WHERE display_name = $1`,
+		updateUserProfileGuildsQuantity: `UPDATE users_profile
+		SET guilds_quantity = $1 
+		WHERE id = $2 AND deleted_at IS NULL
+		RETURNING *`,
+		updateUserProfileMessagesQuantity: `UPDATE users_profile
+		SET messages_quantity = $1 
+		WHERE id = $2 AND deleted_at IS NULL
+		RETURNING *`,
 	}
 }
 
@@ -94,6 +107,20 @@ func (r *PostgresUserProfileRepository) FindByUserID(userID int) (*entity.UserPr
 	return &profile, nil
 }
 
+func (r *PostgresUserProfileRepository) FindByID(id int) (*entity.UserProfile, error) {
+	stmt, err := r.statement(findUserByID)
+	if err != nil {
+		return nil, err
+	}
+
+	var profile entity.UserProfile
+	if err := stmt.Get(&profile, id); err != nil {
+		return nil, err
+	}
+
+	return &profile, nil
+}
+
 func (r *PostgresUserProfileRepository) FindByDisplayName(displayName string) (*entity.UserProfile, error) {
 	stmt, err := r.statement(findUserProfileByDisplayName)
 	if err != nil {
@@ -106,4 +133,30 @@ func (r *PostgresUserProfileRepository) FindByDisplayName(displayName string) (*
 	}
 
 	return &profile, nil
+}
+
+func (r *PostgresUserProfileRepository) UpdateGuildsQuantity(id int, quantity int) error {
+	stmt, err := r.statement(updateUserProfileGuildsQuantity)
+	if err != nil {
+		return err
+	}
+
+	if _, err := stmt.Exec(quantity, id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *PostgresUserProfileRepository) UpdateMessagesQuantity(id int, quantity int) error {
+	stmt, err := r.statement(updateUserProfileMessagesQuantity)
+	if err != nil {
+		return err
+	}
+
+	if _, err := stmt.Exec(quantity, id); err != nil {
+		return err
+	}
+
+	return nil
 }

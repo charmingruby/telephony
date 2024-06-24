@@ -7,8 +7,9 @@ import (
 )
 
 func (s *GuildService) CreateGuild(dto dto.CreateGuildDTO) error {
-	if err := s.userCliet.UserExists(dto.OwnerID); err != nil {
-		return validation.NewNotFoundErr("user")
+	profileExists := s.userCliet.ProfileExists(dto.OwnerID)
+	if !profileExists {
+		return validation.NewNotFoundErr("user_profile")
 	}
 
 	guild, err := entity.NewGuild(
