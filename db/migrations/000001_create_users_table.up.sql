@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id bigserial PRIMARY KEY NOT NULL,
-    uuid varchar NOT NULL,
     first_name varchar NOT NULL,
     last_name varchar NOT NULL,
     email varchar NOT NULL,
