@@ -14,7 +14,12 @@ func (s *UserService) CreateProfile(dto dto.CreateProfileDTO) error {
 
 	_, err = s.profileRepo.FindByUserID(user.ID)
 	if err == nil {
-		return validation.NewConflictErr("user", "profile")
+		return validation.NewConflictErr("user profile", "user_id")
+	}
+
+	_, err = s.profileRepo.FindByDisplayName(dto.DisplayName)
+	if err == nil {
+		return validation.NewConflictErr("user profile", "display_name")
 	}
 
 	profile, err := entity.NewUserProfile(dto.DisplayName, dto.Bio, dto.UserID)

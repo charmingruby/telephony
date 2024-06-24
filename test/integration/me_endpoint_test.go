@@ -9,7 +9,9 @@ import (
 
 func (s *Suite) Test_MeEndpoint() {
 	s.Run("it should be able to get an user profile", func() {
-		user, profile, err := createSampleUser(s.userRepo, s.profileRepo)
+		user, err := createSampleUser("dummy@email.com", s.userRepo)
+		s.NoError(err)
+		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
 		s.NoError(err)
 
 		client := &http.Client{}

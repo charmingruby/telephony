@@ -23,12 +23,12 @@ func (s *Suite) SetupSuite() {
 	s.userService = NewUserService(s.userRepo, s.profileRepo, fakeCrypto)
 }
 
-func (s *Suite) SetupTest() {
+func (s *Suite) TearDownTest() {
 	s.userRepo.Items = []entity.User{}
 	s.profileRepo.Items = []entity.UserProfile{}
 }
 
-func (s *Suite) SetupSubTest() {
+func (s *Suite) TearDownSubTest() {
 	s.userRepo.Items = []entity.User{}
 	s.profileRepo.Items = []entity.UserProfile{}
 }

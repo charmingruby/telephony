@@ -30,6 +30,37 @@ func (s *Suite) Test_CreateProfile() {
 		s.Equal(dummyDisplayName, s.profileRepo.Items[0].DisplayName)
 	})
 
+	s.Run("it should be able to create a profile with a conflicting display_name", func() {
+		dummyUser.ID = 1
+
+		err := s.userRepo.Store(dummyUser)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		profile, err := entity.NewUserProfile(dummyDisplayName, dummyBio, dummyUser.ID)
+		s.NoError(err)
+		err = s.profileRepo.Store(profile)
+		s.NoError(err)
+		s.Equal(1, len(s.profileRepo.Items))
+
+		dummyUser.ID = 2
+		err = s.userRepo.Store(dummyUser)
+		s.NoError(err)
+		s.Equal(2, len(s.userRepo.Items))
+
+		dto := dto.CreateProfileDTO{
+			DisplayName: dummyDisplayName,
+			Bio:         dummyBio,
+			UserID:      2,
+		}
+
+		err = s.userService.CreateProfile(dto)
+
+		s.Error(err)
+		s.Equal(validation.NewConflictErr("user profile", "display_name").Error(), err.Error())
+		s.Equal(1, len(s.profileRepo.Items))
+	})
+
 	s.Run("it should be not able to create a profile with an invalid UserID", func() {
 		dto := dto.CreateProfileDTO{
 			DisplayName: dummyDisplayName,
@@ -81,6 +112,6 @@ func (s *Suite) Test_CreateProfile() {
 		err = s.userService.CreateProfile(dto)
 
 		s.Error(err)
-		s.Equal(validation.NewConflictErr("user", "profile").Error(), err.Error())
+		s.Equal(validation.NewConflictErr("user profile", "user_id").Error(), err.Error())
 	})
 }

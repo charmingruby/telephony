@@ -9,7 +9,6 @@ import (
 type CreateProfileRequest struct {
 	DisplayName string `json:"display_name" binding:"required"`
 	Bio         string `json:"bio" binding:"required"`
-	UserID      int    `json:"user_id" binding:"required"`
 }
 
 // Create profile godoc
@@ -27,6 +26,12 @@ type CreateProfileRequest struct {
 //	@Failure		500		{object}	Response
 //	@Router			/me/profile [post]
 func (h *Handler) createProfileEndpoint(c *gin.Context) {
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		NewInternalServerError(c, err)
+		return
+	}
+
 	var req CreateProfileRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		NewPayloadError(c, err)
@@ -36,7 +41,7 @@ func (h *Handler) createProfileEndpoint(c *gin.Context) {
 	dto := dto.CreateProfileDTO{
 		DisplayName: req.DisplayName,
 		Bio:         req.Bio,
-		UserID:      req.UserID,
+		UserID:      userID,
 	}
 
 	if err := h.userService.CreateProfile(dto); err != nil {

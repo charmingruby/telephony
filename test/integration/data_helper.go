@@ -7,47 +7,55 @@ import (
 )
 
 func createSampleUser(
+	email string,
 	userRepo *database.PostgresUserRepository,
-	profileRepo *database.PostgresUserProfileRepository,
-) (*entity.User, *entity.UserProfile, error) {
+) (*entity.User, error) {
 	passwordHash, err := cryptography.NewCryptography().GenerateHash("password123")
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	user, err := entity.NewUser(
 		"dummy name",
 		"dummy lastname",
-		"dummy@email.com",
+		email,
 		"password",
 	)
 	user.PasswordHash = passwordHash
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if err := userRepo.Store(user); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	userPersisted, err := userRepo.FindByEmail(user.Email)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	user.ID = userPersisted.ID
 
+	return user, nil
+}
+
+func createSampleUserProfile(
+	userID int,
+	displayName string,
+	profileRepo *database.PostgresUserProfileRepository,
+) (*entity.UserProfile, error) {
 	profile, err := entity.NewUserProfile(
-		"dummy nick",
+		displayName,
 		"dummy biography",
-		userPersisted.ID,
+		userID,
 	)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if err := profileRepo.Store(profile); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return user, profile, nil
+	return profile, nil
 }
