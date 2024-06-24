@@ -1,8 +1,6 @@
 package endpoint
 
 import (
-	"fmt"
-
 	"github.com/charmingruby/telephony/internal/domain/user/entity"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
@@ -26,19 +24,13 @@ type MeResponse struct {
 //	@Failure		500		{object}	Response
 //	@Router			/me [get]
 func (h *Handler) meEndpoint(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		NewUnauthorizedErr(c, "user_id not found from token")
+	userID, err := getCurrentUser(c)
+	if err != nil {
+		NewInternalServerError(c, err)
 		return
 	}
 
-	userIDParsed, ok := userID.(int)
-	if !ok {
-		NewInternalServerError(c, fmt.Errorf("cannot parse user_id"))
-		return
-	}
-
-	profile, err := h.userService.GetProfileByID(userIDParsed)
+	profile, err := h.userService.GetProfileByID(userID)
 	if err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
