@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id bigserial PRIMARY KEY NOT NULL,
+    uuid varchar NOT NULL,
     first_name varchar NOT NULL,
     last_name varchar NOT NULL,
     email varchar NOT NULL,
@@ -28,11 +29,3 @@ CREATE TABLE IF NOT EXISTS users_profile
 
 CREATE UNIQUE INDEX users_profile_display_name_uindex
     ON users_profile (display_name);
-
-
-CREATE TABLE IF NOT EXISTS examples
-(
-    id varchar PRIMARY KEY NOT NULL,
-    name varchar NOT NULL,
-    created_at timestamp DEFAULT now() NOT NULL
-);
