@@ -16,7 +16,7 @@ func AuthMiddleware(jwt *token.JWTService) gin.HandlerFunc {
 			return
 		}
 
-		token := strings.Split(bearerToken, " ")[1] // <token>
+		token := strings.Split(bearerToken, " ")[1]
 
 		payload, err := jwt.ValidateToken(token)
 		if err != nil {

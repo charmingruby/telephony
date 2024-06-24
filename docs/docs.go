@@ -127,6 +127,99 @@ const docTemplate = `{
                 }
             }
         },
+        "/me": {
+            "get": {
+                "description": "Get authenticated user profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Get authenticated user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.MeResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/profile": {
+            "post": {
+                "description": "Create an user profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Create an user profile",
+                "parameters": [
+                    {
+                        "description": "Create Profile Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.CreateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/welcome": {
             "get": {
                 "description": "Health Check",
@@ -149,6 +242,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "endpoint.CreateProfileRequest": {
+            "type": "object",
+            "required": [
+                "bio",
+                "display_name",
+                "user_id"
+            ],
+            "properties": {
+                "bio": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "endpoint.CredentialsAuthData": {
             "type": "object",
             "properties": {
@@ -177,6 +289,20 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/endpoint.CredentialsAuthData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.MeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/entity.UserProfile"
                 },
                 "message": {
                     "type": "string"
@@ -220,11 +346,54 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "entity.UserProfile": {
+            "type": "object",
+            "required": [
+                "bio",
+                "created_at",
+                "display_name",
+                "id",
+                "updated_at",
+                "user_id"
+            ],
+            "properties": {
+                "bio": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "minLength": 4
+                },
+                "guilds_quantity": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "messages_quantity": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
         }
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
-            "description": "Description for what is this security definition being used",
+            "description": "Ensures the user is authorized",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

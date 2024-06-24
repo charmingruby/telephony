@@ -1,5 +1,18 @@
 basePath: /api/v1
 definitions:
+  endpoint.CreateProfileRequest:
+    properties:
+      bio:
+        type: string
+      display_name:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - bio
+    - display_name
+    - user_id
+    type: object
   endpoint.CredentialsAuthData:
     properties:
       access_token:
@@ -19,6 +32,15 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/endpoint.CredentialsAuthData'
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  endpoint.MeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/entity.UserProfile'
       message:
         type: string
       status_code:
@@ -47,6 +69,37 @@ definitions:
         type: string
       status_code:
         type: integer
+    type: object
+  entity.UserProfile:
+    properties:
+      bio:
+        maxLength: 32
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      display_name:
+        maxLength: 16
+        minLength: 4
+        type: string
+      guilds_quantity:
+        type: integer
+      id:
+        type: integer
+      messages_quantity:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - bio
+    - created_at
+    - display_name
+    - id
+    - updated_at
+    - user_id
     type: object
 host: localhost:3000
 info:
@@ -129,6 +182,67 @@ paths:
       summary: Create user
       tags:
       - Users
+  /me:
+    get:
+      consumes:
+      - application/json
+      description: Get authenticated user profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.MeResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Get authenticated user profile
+      tags:
+      - Profiles
+  /me/profile:
+    post:
+      consumes:
+      - application/json
+      description: Create an user profile
+      parameters:
+      - description: Create Profile Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.CreateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Create an user profile
+      tags:
+      - Profiles
   /welcome:
     get:
       description: Health Check
@@ -144,7 +258,7 @@ paths:
       - Health
 securityDefinitions:
   ApiKeyAuth:
-    description: Description for what is this security definition being used
+    description: Ensures the user is authorized
     in: header
     name: Authorization
     type: apiKey

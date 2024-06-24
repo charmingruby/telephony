@@ -4,6 +4,7 @@ import (
 	docs "github.com/charmingruby/telephony/docs"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/security/token"
+	"github.com/charmingruby/telephony/internal/infra/transport/rest/middleware"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -37,6 +38,9 @@ func (h *Handler) Register() {
 
 		v1.POST("/auth/register", h.registerEndpoint)
 		v1.POST("/auth/login", h.credentialsAuthEndpoint)
+
+		v1.POST("/me/profile", middleware.AuthMiddleware(h.token), h.createProfileEndpoint)
+		v1.GET("/me", middleware.AuthMiddleware(h.token), h.meEndpoint)
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

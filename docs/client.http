@@ -1,4 +1,5 @@
 @baseUrl = http://localhost:3001/api/v1
+@accessToken = {{login.response.body.data.access_token}}
 
 # @name ping
 GET {{baseUrl}}/welcome
@@ -26,4 +27,22 @@ Content-Type: application/json
 {
     "email": "dummy@email.com",
     "password": "password123"
+}
+
+###
+
+# @name me
+GET {{baseUrl}}/me
+Authorization: Bearer {{accessToken}}
+
+###
+
+# @name create_profile
+POST {{baseUrl}}/me/profile
+Authorization: Bearer {{accessToken}}
+
+{
+  "bio": "short bio",
+  "display_name": "dummy_nick",
+  "user_id": 1
 }
