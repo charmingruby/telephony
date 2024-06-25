@@ -33,6 +33,5 @@ func Test_NewGuild(t *testing.T) {
 		assert.Nil(t, g)
 		assert.Error(t, err)
 		assert.Equal(t, validation.NewValidationErr(validation.ErrRequired("name")).Error(), err.Error())
-
 	})
 }

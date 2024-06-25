@@ -2,7 +2,7 @@ package inmemory
 
 import "github.com/charmingruby/telephony/internal/domain/user/entity"
 
-func NewInMemoryUserProfileClient(profileRepo InMemoryUserProfileRepository) *InMemoryUserProfileClient {
+func NewInMemoryUserProfileClient(profileRepo *InMemoryUserProfileRepository) *InMemoryUserProfileClient {
 	return &InMemoryUserProfileClient{
 		Items:       []entity.UserProfile{},
 		ProfileRepo: profileRepo,
@@ -11,7 +11,7 @@ func NewInMemoryUserProfileClient(profileRepo InMemoryUserProfileRepository) *In
 
 type InMemoryUserProfileClient struct {
 	Items       []entity.UserProfile
-	ProfileRepo InMemoryUserProfileRepository
+	ProfileRepo *InMemoryUserProfileRepository
 }
 
 func (c *InMemoryUserProfileClient) ProfileExists(id int) bool {

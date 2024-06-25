@@ -22,7 +22,12 @@ func (s *GuildService) CreateGuild(dto dto.CreateGuildDTO) error {
 		return err
 	}
 
-	if err := s.guildRepo.Store(guild); err != nil {
+	_, err = s.guildRepo.Store(guild)
+	if err != nil {
+		return validation.NewInternalErr()
+	}
+
+	if err := s.userCliet.GuildJoin(dto.OwnerID); err != nil {
 		return validation.NewInternalErr()
 	}
 
