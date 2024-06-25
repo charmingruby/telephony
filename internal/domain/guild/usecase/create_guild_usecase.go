@@ -7,16 +7,20 @@ import (
 )
 
 func (s *GuildService) CreateGuild(dto dto.CreateGuildDTO) error {
-	profileExists := s.userCliet.ProfileExists(dto.OwnerID)
+	profileExists := s.userCliet.ProfileExists(dto.ProfileID)
 	if !profileExists {
 		return validation.NewNotFoundErr("user_profile")
+	}
+
+	if _, err := s.guildRepo.FindByName(dto.Name); err == nil {
+		return validation.NewConflictErr("guild", "name")
 	}
 
 	guild, err := entity.NewGuild(
 		dto.Name,
 		dto.Description,
 		dto.Tags,
-		dto.OwnerID,
+		dto.ProfileID,
 	)
 	if err != nil {
 		return err
@@ -27,7 +31,7 @@ func (s *GuildService) CreateGuild(dto dto.CreateGuildDTO) error {
 		return validation.NewInternalErr()
 	}
 
-	if err := s.userCliet.GuildJoin(dto.OwnerID); err != nil {
+	if err := s.userCliet.GuildJoin(dto.ProfileID); err != nil {
 		return validation.NewInternalErr()
 	}
 

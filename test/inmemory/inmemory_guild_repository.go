@@ -31,6 +31,16 @@ func (r *InMemoryGuildRepository) FindByID(id int) (*entity.Guild, error) {
 	return nil, validation.NewNotFoundErr("guild")
 }
 
+func (r *InMemoryGuildRepository) FindByName(name string) (*entity.Guild, error) {
+	for _, e := range r.Items {
+		if e.Name == name {
+			return &e, nil
+		}
+	}
+
+	return nil, validation.NewNotFoundErr("guild")
+}
+
 func (r *InMemoryGuildRepository) ListAvailables(page int) ([]entity.Guild, error) {
 	guilds := []entity.Guild{}
 
