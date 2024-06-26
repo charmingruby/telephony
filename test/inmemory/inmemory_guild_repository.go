@@ -48,6 +48,14 @@ func (r *InMemoryGuildRepository) ListAvailables(page int) ([]entity.Guild, erro
 	startValue := pageToFilter * core.ItemsPerPage()
 	endValue := startValue + core.ItemsPerPage()
 
+	if startValue >= len(r.Items) {
+		return guilds, nil
+	}
+
+	if endValue > len(r.Items) {
+		endValue = len(r.Items)
+	}
+
 	for i := startValue; i < endValue; i++ {
 		currentItem := r.Items[i]
 		if currentItem.DeletedAt == nil {
