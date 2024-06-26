@@ -15,8 +15,8 @@ type RegisterRequest struct {
 
 // Register godoc
 //
-//	@Summary		Create user
-//	@Description	Create a New user
+//	@Summary		Creates an user
+//	@Description	Creates an user
 //	@Tags			Users
 //	@Accept			json
 //	@Produce		json

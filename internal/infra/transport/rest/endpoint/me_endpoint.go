@@ -14,8 +14,8 @@ type MeResponse struct {
 
 // Me godoc
 //
-//	@Summary		Get authenticated user profile
-//	@Description	Get authenticated user profile
+//	@Summary		Gets authenticated user profile
+//	@Description	Gets authenticated user profile
 //	@Tags			Profiles
 //	@Accept			json
 //	@Produce		json

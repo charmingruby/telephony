@@ -13,8 +13,8 @@ type CreateProfileRequest struct {
 
 // Create profile godoc
 //
-//	@Summary		Create an user profile
-//	@Description	Create an user profile
+//	@Summary		Creates an user profile
+//	@Description	Creates an user profile
 //	@Tags			Profiles
 //	@Accept			json
 //	@Produce		json
