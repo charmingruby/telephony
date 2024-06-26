@@ -16,15 +16,15 @@ type GuildServiceContract interface {
 
 func NewGuildService(
 	guildRepo repository.GuildRepository,
-	userCliet client.UserClient,
+	userClient client.UserClient,
 ) *GuildService {
 	return &GuildService{
-		guildRepo: guildRepo,
-		userCliet: userCliet,
+		guildRepo:  guildRepo,
+		userClient: userClient,
 	}
 }
 
 type GuildService struct {
-	guildRepo repository.GuildRepository
-	userCliet client.UserClient
+	guildRepo  repository.GuildRepository
+	userClient client.UserClient
 }

@@ -5,4 +5,5 @@ type CreateGuildDTO struct {
 	Description string
 	Tags        []string
 	ProfileID   int
+	UserID      int
 }

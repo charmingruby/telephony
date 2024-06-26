@@ -35,6 +35,9 @@ func (c *InMemoryUserProfileClient) IsTheProfileOwner(userID, profileID int) boo
 		return false
 	}
 
+	println(userID)
+	println(profileID)
+
 	return profile.UserID == userID
 }
 

@@ -29,11 +29,13 @@ func (s *Suite) SetupSuite() {
 
 func (s *Suite) TearDownTest() {
 	s.profileRepo.Items = []userEntity.UserProfile{}
+	s.userRepo.Items = []userEntity.User{}
 	s.guildRepo.Items = []guildEntity.Guild{}
 }
 
 func (s *Suite) TearDownSubTest() {
 	s.profileRepo.Items = []userEntity.UserProfile{}
+	s.userRepo.Items = []userEntity.User{}
 	s.guildRepo.Items = []guildEntity.Guild{}
 }
 

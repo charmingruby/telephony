@@ -8,7 +8,10 @@ import (
 )
 
 func (s *Suite) Test_CreateGuild() {
-	profile, err := userEntity.NewUserProfile("dummy name", "dummy biography", 1)
+	user, err := userEntity.NewUser("dummy name", "dummy last name", "dummy@email.com", "password123")
+	s.NoError(err)
+
+	profile, err := userEntity.NewUserProfile("dummy name", "dummy biography", user.ID)
 	s.NoError(err)
 
 	dummyGuildName := "dummy name"
@@ -19,6 +22,48 @@ func (s *Suite) Test_CreateGuild() {
 	s.NoError(err)
 
 	s.Run("it should be able to create a guild", func() {
+		_, err := s.userRepo.Store(user)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		_, err = s.profileRepo.Store(profile)
+		s.NoError(err)
+		s.Equal(1, len(s.profileRepo.Items))
+
+		dto := dto.CreateGuildDTO{
+			Name:        dummyGuildName,
+			Description: dummyGuildDescription,
+			Tags:        dummyTags,
+			ProfileID:   profile.ID,
+			UserID:      user.ID,
+		}
+
+		err = s.guildService.CreateGuild(dto)
+
+		s.NoError(err)
+		s.Equal(dummyGuildName, s.guildRepo.Items[0].Name)
+	})
+
+	s.Run("it should be not able to create a guild if profile do not exists", func() {
+		_, err := s.userRepo.Store(user)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		dto := dto.CreateGuildDTO{
+			Name:        dummyGuildName,
+			Description: dummyGuildDescription,
+			Tags:        dummyTags,
+			ProfileID:   -2,
+			UserID:      user.ID,
+		}
+
+		err = s.guildService.CreateGuild(dto)
+
+		s.Error(err)
+		s.Equal(validation.NewNotFoundErr("user_profile").Error(), err.Error())
+	})
+
+	s.Run("it should be not able to create a guild if user do not exists", func() {
 		_, err := s.profileRepo.Store(profile)
 		s.NoError(err)
 		s.Equal(1, len(s.profileRepo.Items))
@@ -28,32 +73,53 @@ func (s *Suite) Test_CreateGuild() {
 			Description: dummyGuildDescription,
 			Tags:        dummyTags,
 			ProfileID:   profile.ID,
-		}
-
-		err = s.guildService.CreateGuild(dto)
-
-		s.NoError(err)
-		s.Equal(dummyGuildName, s.guildRepo.Items[0].Name)
-	})
-
-	s.Run("it should be not able to create a guild if owner don't exists", func() {
-		s.Equal(0, len(s.profileRepo.Items))
-
-		dto := dto.CreateGuildDTO{
-			Name:        dummyGuildName,
-			Description: dummyGuildDescription,
-			Tags:        dummyTags,
-			ProfileID:   1,
+			UserID:      -2,
 		}
 
 		err = s.guildService.CreateGuild(dto)
 
 		s.Error(err)
-		s.Equal(validation.NewNotFoundErr("user_profile").Error(), err.Error())
+		s.Equal(validation.NewNotFoundErr("user").Error(), err.Error())
+	})
+
+	s.Run("it should be not able to create a guild if its not the profile owner", func() {
+		_, err := s.userRepo.Store(user)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		otherUser := *user
+		otherUser.ID = -2
+		_, err = s.userRepo.Store(&otherUser)
+		s.NoError(err)
+		s.Equal(-2, s.userRepo.Items[1].ID)
+
+		otherUserProfile := *profile
+		otherUserProfile.ID = -2
+		otherUserProfile.UserID = otherUser.ID
+		_, err = s.profileRepo.Store(&otherUserProfile)
+		s.NoError(err)
+		s.Equal(1, len(s.profileRepo.Items))
+
+		dto := dto.CreateGuildDTO{
+			Name:        dummyGuildName,
+			Description: dummyGuildDescription,
+			Tags:        dummyTags,
+			ProfileID:   otherUserProfile.ID,
+			UserID:      user.ID,
+		}
+
+		err = s.guildService.CreateGuild(dto)
+
+		s.Error(err)
+		s.Equal(validation.NewUnauthorizedErr().Error(), err.Error())
 	})
 
 	s.Run("it should be not able to create a guild if name is already taken", func() {
-		_, err := s.profileRepo.Store(profile)
+		_, err := s.userRepo.Store(user)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		_, err = s.profileRepo.Store(profile)
 		s.NoError(err)
 		s.Equal(1, len(s.profileRepo.Items))
 
@@ -66,6 +132,7 @@ func (s *Suite) Test_CreateGuild() {
 			Description: dummyGuildDescription,
 			Tags:        dummyTags,
 			ProfileID:   profile.ID,
+			UserID:      user.ID,
 		}
 
 		err = s.guildService.CreateGuild(dto)
@@ -75,6 +142,10 @@ func (s *Suite) Test_CreateGuild() {
 	})
 
 	s.Run("it should be not able to create a guild with validation error", func() {
+		_, err = s.userRepo.Store(user)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
 		_, err := s.profileRepo.Store(profile)
 		s.NoError(err)
 		s.Equal(1, len(s.profileRepo.Items))
@@ -84,6 +155,7 @@ func (s *Suite) Test_CreateGuild() {
 			Description: dummyGuildDescription,
 			Tags:        dummyTags,
 			ProfileID:   profile.ID,
+			UserID:      user.ID,
 		}
 
 		err = s.guildService.CreateGuild(dto)
