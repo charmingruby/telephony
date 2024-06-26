@@ -13,6 +13,7 @@ import (
 type Suite struct {
 	suite.Suite
 	profileClient *inmemory.InMemoryUserProfileClient
+	userRepo      *inmemory.InMemoryUserRepository
 	profileRepo   *inmemory.InMemoryUserProfileRepository
 	guildRepo     *inmemory.InMemoryGuildRepository
 	guildService  *GuildService
@@ -21,7 +22,8 @@ type Suite struct {
 func (s *Suite) SetupSuite() {
 	s.guildRepo = inmemory.NewInMemoryGuildRepository()
 	s.profileRepo = inmemory.NewInMemoryUserProfileRepository()
-	s.profileClient = inmemory.NewInMemoryUserProfileClient(s.profileRepo)
+	s.userRepo = inmemory.NewInMemoryUserRepository()
+	s.profileClient = inmemory.NewInMemoryUserProfileClient(s.profileRepo, s.userRepo)
 	s.guildService = NewGuildService(s.guildRepo, s.profileClient)
 }
 

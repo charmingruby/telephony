@@ -16,7 +16,7 @@ type GuildServiceContract interface {
 
 func NewGuildService(
 	guildRepo repository.GuildRepository,
-	userCliet client.UserProfileClient,
+	userCliet client.UserClient,
 ) *GuildService {
 	return &GuildService{
 		guildRepo: guildRepo,
@@ -26,5 +26,5 @@ func NewGuildService(
 
 type GuildService struct {
 	guildRepo repository.GuildRepository
-	userCliet client.UserProfileClient
+	userCliet client.UserClient
 }
