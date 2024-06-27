@@ -44,7 +44,7 @@ func (c *UserClient) GuildJoin(id int) error {
 	return nil
 }
 
-func (c *UserClient) GuildLeave(id int, quantityToDec int) error {
+func (c *UserClient) GuildLeave(id int) error {
 	if err := c.profileRepo.UpdateGuildsQuantity(id, -1); err != nil {
 		return err
 	}

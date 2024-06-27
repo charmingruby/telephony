@@ -2,7 +2,9 @@ package endpoint
 
 import (
 	docs "github.com/charmingruby/telephony/docs"
+	guildUc "github.com/charmingruby/telephony/internal/domain/guild/usecase"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
+
 	"github.com/charmingruby/telephony/internal/infra/security/token"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/middleware"
 	"github.com/gin-gonic/gin"
@@ -14,18 +16,21 @@ func NewHandler(
 	router *gin.Engine,
 	token *token.JWTService,
 	userService userUc.UserServiceContract,
+	guildService guildUc.GuildServiceContract,
 ) *Handler {
 	return &Handler{
-		router:      router,
-		token:       token,
-		userService: userService,
+		router:       router,
+		token:        token,
+		userService:  userService,
+		guildService: guildService,
 	}
 }
 
 type Handler struct {
-	router      *gin.Engine
-	token       *token.JWTService
-	userService userUc.UserServiceContract
+	router       *gin.Engine
+	token        *token.JWTService
+	userService  userUc.UserServiceContract
+	guildService guildUc.GuildServiceContract
 }
 
 func (h *Handler) Register() {

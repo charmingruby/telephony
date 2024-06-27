@@ -7,8 +7,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/charmingruby/telephony/internal/domain/guild/usecase"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 	"github.com/charmingruby/telephony/internal/infra/database"
+	"github.com/charmingruby/telephony/internal/infra/database/client"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
 	"github.com/charmingruby/telephony/internal/infra/security/token"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
@@ -30,6 +32,7 @@ type Suite struct {
 	token       *token.JWTService
 	userRepo    *database.PostgresUserRepository
 	profileRepo *database.PostgresUserProfileRepository
+	guildRepo   *database.PostgresGuildRepository
 }
 
 func (s *Suite) SetupSuite() {
@@ -75,11 +78,21 @@ func (s *Suite) setupDependencies() {
 	}
 	s.profileRepo = profileRepo
 
+	guildRepo, err := database.NewPostgresGuildRepository(s.container.DB)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+	s.guildRepo = guildRepo
+
+	userClient := client.NewUserClient(s.profileRepo, s.userRepo)
+
 	userSvc := userUc.NewUserService(s.userRepo, s.profileRepo, cryptography.NewCryptography())
+	guildSvc := usecase.NewGuildService(s.guildRepo, userClient)
 
 	s.token = token.NewJWTService("secret", "telephony")
 
-	s.handler = endpoint.NewHandler(router, s.token, userSvc)
+	s.handler = endpoint.NewHandler(router, s.token, userSvc, guildSvc)
 	s.handler.Register()
 	server := rest.NewServer(router, "3000")
 

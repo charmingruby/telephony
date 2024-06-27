@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS guilds
     description varchar NOT NULL,
     tags varchar[] NOT NULL,
     channels_quantity integer NOT NULL,
-    profile_id integer REFERENCES users_profile (id),
+    owner_id integer REFERENCES users_profile (id),
     created_at timestamp DEFAULT now() NOT NULL,
     updated_at timestamp DEFAULT now() NOT NULL,
     deleted_at timestamp

@@ -12,8 +12,11 @@ import (
 	"time"
 
 	"github.com/charmingruby/telephony/internal/config"
+	guildUc "github.com/charmingruby/telephony/internal/domain/guild/usecase"
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
+
 	"github.com/charmingruby/telephony/internal/infra/database"
+	"github.com/charmingruby/telephony/internal/infra/database/client"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
 	"github.com/charmingruby/telephony/internal/infra/security/token"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
@@ -88,11 +91,18 @@ func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 		os.Exit(1)
 	}
 
+	guildRepo, err := database.NewPostgresGuildRepository(db)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
+	userClient := client.NewUserClient(profileRepo, userRepo)
+	token := token.NewJWTService(cfg.JWTConfig.SecretKey, cfg.JWTConfig.Issuer)
 	crypto := cryptography.NewCryptography()
 
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
+	guildSvc := guildUc.NewGuildService(guildRepo, userClient)
 
-	token := token.NewJWTService(cfg.JWTConfig.SecretKey, cfg.JWTConfig.Issuer)
-
-	endpoint.NewHandler(router, token, userSvc).Register()
+	endpoint.NewHandler(router, token, userSvc, guildSvc).Register()
 }
