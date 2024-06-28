@@ -15,7 +15,6 @@ func (s *Suite) Test_FetchAvailableGuilds() {
 
 	dummyName := "dummy name"
 	dummyDescription := "dummy description"
-	dummyTags := []string{"dummy tag"}
 
 	s.Run("it should be able to fetch paginated available guilds", func() {
 		_, err := s.profileRepo.Store(profile)
@@ -26,7 +25,6 @@ func (s *Suite) Test_FetchAvailableGuilds() {
 			guild, _ := entity.NewGuild(
 				fmt.Sprintf("%s%d", dummyName, i),
 				dummyDescription,
-				dummyTags,
 				profile.ID,
 			)
 			guild.ID = i
@@ -61,7 +59,6 @@ func (s *Suite) Test_FetchAvailableGuilds() {
 			guild, _ := entity.NewGuild(
 				fmt.Sprintf("%s%d", dummyName, i),
 				dummyDescription,
-				dummyTags,
 				profile.ID,
 			)
 			guild.ID = i
@@ -86,7 +83,6 @@ func (s *Suite) Test_FetchAvailableGuilds() {
 			guild, _ := entity.NewGuild(
 				fmt.Sprintf("%s%d", dummyName, i),
 				dummyDescription,
-				dummyTags,
 				profile.ID,
 			)
 			guild.ID = i

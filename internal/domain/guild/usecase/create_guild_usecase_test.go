@@ -16,9 +16,8 @@ func (s *Suite) Test_CreateGuild() {
 
 	dummyGuildName := "dummy name"
 	dummyGuildDescription := "dummy description"
-	dummyTags := []string{"Development"}
 
-	guild, err := guildEntity.NewGuild(dummyGuildName, dummyGuildDescription, dummyTags, profile.ID)
+	guild, err := guildEntity.NewGuild(dummyGuildName, dummyGuildDescription, profile.ID)
 	s.NoError(err)
 
 	s.Run("it should be able to create a guild", func() {
@@ -33,7 +32,6 @@ func (s *Suite) Test_CreateGuild() {
 		dto := dto.CreateGuildDTO{
 			Name:        dummyGuildName,
 			Description: dummyGuildDescription,
-			Tags:        dummyTags,
 			ProfileID:   profile.ID,
 			UserID:      user.ID,
 		}
@@ -52,7 +50,6 @@ func (s *Suite) Test_CreateGuild() {
 		dto := dto.CreateGuildDTO{
 			Name:        dummyGuildName,
 			Description: dummyGuildDescription,
-			Tags:        dummyTags,
 			ProfileID:   -2,
 			UserID:      user.ID,
 		}
@@ -71,7 +68,6 @@ func (s *Suite) Test_CreateGuild() {
 		dto := dto.CreateGuildDTO{
 			Name:        dummyGuildName,
 			Description: dummyGuildDescription,
-			Tags:        dummyTags,
 			ProfileID:   profile.ID,
 			UserID:      -2,
 		}
@@ -103,7 +99,6 @@ func (s *Suite) Test_CreateGuild() {
 		dto := dto.CreateGuildDTO{
 			Name:        dummyGuildName,
 			Description: dummyGuildDescription,
-			Tags:        dummyTags,
 			ProfileID:   otherUserProfile.ID,
 			UserID:      user.ID,
 		}
@@ -130,7 +125,6 @@ func (s *Suite) Test_CreateGuild() {
 		dto := dto.CreateGuildDTO{
 			Name:        guild.Name,
 			Description: dummyGuildDescription,
-			Tags:        dummyTags,
 			ProfileID:   profile.ID,
 			UserID:      user.ID,
 		}
@@ -153,7 +147,6 @@ func (s *Suite) Test_CreateGuild() {
 		dto := dto.CreateGuildDTO{
 			Name:        "",
 			Description: dummyGuildDescription,
-			Tags:        dummyTags,
 			ProfileID:   profile.ID,
 			UserID:      user.ID,
 		}

@@ -7,12 +7,11 @@ import (
 	"github.com/charmingruby/telephony/internal/validation"
 )
 
-func NewGuild(name, description string, tags []string, profileID int) (*Guild, error) {
+func NewGuild(name, description string, profileID int) (*Guild, error) {
 	guild := Guild{
 		ID:               core.NewDefaultDomainID(),
 		Name:             name,
 		Description:      description,
-		Tags:             tags,
 		ChannelsQuantity: 0,
 		OwnerID:          profileID,
 		CreatedAt:        time.Now(),
@@ -31,7 +30,6 @@ type Guild struct {
 	ID               int        `json:"id" validate:"required" db:"id"`
 	Name             string     `json:"name" validate:"required,min=1,max=36" db:"name"`
 	Description      string     `json:"description" validate:"required,min=1,max=255" db:"description"`
-	Tags             []string   `json:"tags" validate:"min=1,max=4" db:"tags"`
 	ChannelsQuantity int        `json:"channels_quantity" db:"channels_quantity"`
 	OwnerID          int        `json:"owner_id" validate:"required" db:"owner_id"`
 	CreatedAt        time.Time  `json:"created_at" validate:"required" db:"created_at"`

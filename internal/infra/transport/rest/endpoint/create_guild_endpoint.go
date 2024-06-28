@@ -7,10 +7,9 @@ import (
 )
 
 type CreateGuildRequest struct {
-	Name        string   `json:"name" binding:"required"`
-	Description string   `json:"description" binding:"required"`
-	Tags        []string `json:"tags" binding:"required"`
-	ProfileID   int      `json:"profile_id" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	ProfileID   int    `json:"profile_id" binding:"required"`
 }
 
 // Create guild godoc
@@ -22,9 +21,10 @@ type CreateGuildRequest struct {
 //	@Produce		json
 //	@Param			request	body		CreateGuildRequest	true	"Create Guild Payload"
 //	@Success		201		{object}	Response
-//	@Failure		422		{object}	Response
+//	@Failure		401		{object}	Response
 //	@Failure		404		{object}	Response
 //	@Failure		409		{object}	Response
+//	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
 //	@Router			/guilds [post]
 func (h *Handler) createGuildEndpoint(c *gin.Context) {
@@ -43,7 +43,6 @@ func (h *Handler) createGuildEndpoint(c *gin.Context) {
 	dto := dto.CreateGuildDTO{
 		Name:        req.Name,
 		Description: req.Description,
-		Tags:        req.Tags,
 		ProfileID:   req.ProfileID,
 		UserID:      userID,
 	}
@@ -52,6 +51,12 @@ func (h *Handler) createGuildEndpoint(c *gin.Context) {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
 			NewResourceNotFoundError(c, notFoundErr)
+			return
+		}
+
+		unauthorizedErr, ok := err.(*validation.ErrUnathorized)
+		if ok {
+			NewUnauthorizedErr(c, unauthorizedErr.Error())
 			return
 		}
 
@@ -71,5 +76,5 @@ func (h *Handler) createGuildEndpoint(c *gin.Context) {
 		return
 	}
 
-	NewCreatedResponse(c, "user profile")
+	NewCreatedResponse(c, "guild")
 }

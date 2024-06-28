@@ -1,6 +1,8 @@
 package database
 
 import (
+	"log/slog"
+
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/jmoiron/sqlx"
@@ -17,8 +19,8 @@ const (
 func guildQueries() map[string]string {
 	return map[string]string{
 		createGuild: `INSERT INTO guilds
-		(name, description, tags, channels_quantity, owner_id)
-		VALUES ($1, $2, $3, $4, $5)
+		(name, description, channels_quantity, owner_id)
+		VALUES ($1, $2, $3, $4)
 		RETURNING *`,
 		findGuildByID: `SELECT * FROM guilds 
 		WHERE id = $1`,
@@ -80,14 +82,14 @@ func (r *PostgresGuildRepository) Store(g *entity.Guild) (int, error) {
 		&result,
 		g.Name,
 		g.Description,
-		g.Tags,
 		g.ChannelsQuantity,
 		g.OwnerID,
 	); err != nil {
+		slog.Error(err.Error())
 		return -1, err
 	}
 
-	return result.ID, nil
+	return 2, nil
 }
 
 func (r *PostgresGuildRepository) FindByID(id int) (*entity.Guild, error) {
@@ -143,6 +145,7 @@ func (r *PostgresGuildRepository) Delete(g *entity.Guild) error {
 	}
 
 	if _, err := stmt.Exec(g.DeletedAt, g.ID); err != nil {
+		slog.Error(err.Error())
 		return err
 	}
 

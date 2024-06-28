@@ -1,7 +1,8 @@
 package integration
 
 import (
-	"github.com/charmingruby/telephony/internal/domain/user/entity"
+	guildEntity "github.com/charmingruby/telephony/internal/domain/guild/entity"
+	userEntity "github.com/charmingruby/telephony/internal/domain/user/entity"
 	"github.com/charmingruby/telephony/internal/infra/database"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
 )
@@ -9,13 +10,13 @@ import (
 func createSampleUser(
 	email string,
 	userRepo *database.PostgresUserRepository,
-) (*entity.User, error) {
+) (*userEntity.User, error) {
 	passwordHash, err := cryptography.NewCryptography().GenerateHash("password123")
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := entity.NewUser(
+	user, err := userEntity.NewUser(
 		"dummy name",
 		"dummy lastname",
 		email,
@@ -40,8 +41,8 @@ func createSampleUserProfile(
 	userID int,
 	displayName string,
 	profileRepo *database.PostgresUserProfileRepository,
-) (*entity.UserProfile, error) {
-	profile, err := entity.NewUserProfile(
+) (*userEntity.UserProfile, error) {
+	profile, err := userEntity.NewUserProfile(
 		displayName,
 		"dummy biography",
 		userID,
@@ -58,4 +59,28 @@ func createSampleUserProfile(
 	profile.ID = id
 
 	return profile, nil
+}
+
+func createSampleGuild(
+	profileID int,
+	name string,
+	guildRepo *database.PostgresGuildRepository,
+) (*guildEntity.Guild, error) {
+	guild, err := guildEntity.NewGuild(
+		name,
+		"dummy biography",
+		profileID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := guildRepo.Store(guild)
+	if err != nil {
+		return nil, err
+	}
+
+	guild.ID = id
+
+	return guild, nil
 }

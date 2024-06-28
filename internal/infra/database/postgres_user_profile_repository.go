@@ -108,7 +108,7 @@ func (r *PostgresUserProfileRepository) FindByUserID(userID int) (*entity.UserPr
 }
 
 func (r *PostgresUserProfileRepository) FindByID(id int) (*entity.UserProfile, error) {
-	stmt, err := r.statement(findUserByID)
+	stmt, err := r.statement(findUserProfileByID)
 	if err != nil {
 		return nil, err
 	}

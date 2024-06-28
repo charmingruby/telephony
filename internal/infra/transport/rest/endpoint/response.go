@@ -53,7 +53,7 @@ func NewResourceNotFoundError(c *gin.Context, err error) {
 }
 
 func NewUnauthorizedErr(c *gin.Context, msg string) {
-	NewResponse(c, http.StatusNotFound, nil, msg)
+	NewResponse(c, http.StatusUnauthorized, nil, msg)
 }
 
 func NewInternalServerError(c *gin.Context, err error) {
