@@ -1,6 +1,7 @@
 @baseUrl = http://localhost:3001/api/v1
 @accessToken = {{login.response.body.data.access_token}}
 
+
 # @name ping
 GET {{baseUrl}}/welcome
 Content-Type: application/json
@@ -45,4 +46,16 @@ Authorization: Bearer {{accessToken}}
   "bio": "short bio",
   "display_name": "dummy_nick",
   "user_id": 1
+}
+
+###
+
+# @name create_guild
+POST {{baseUrl}}/guilds
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "dummy name 2",
+  "description": "dummy descrption",
+  "profile_id": 1
 }

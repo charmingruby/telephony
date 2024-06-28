@@ -89,7 +89,7 @@ func (r *PostgresGuildRepository) Store(g *entity.Guild) (int, error) {
 		return -1, err
 	}
 
-	return 2, nil
+	return result.ID, nil
 }
 
 func (r *PostgresGuildRepository) FindByID(id int) (*entity.Guild, error) {
@@ -121,17 +121,19 @@ func (r *PostgresGuildRepository) FindByName(name string) (*entity.Guild, error)
 }
 
 func (r *PostgresGuildRepository) ListAvailables(page int) ([]entity.Guild, error) {
-	stmt, err := r.statement(findUserByEmail)
+	stmt, err := r.statement(listAvailableGuild)
 	if err != nil {
 		return nil, err
 	}
 
 	var guilds []entity.Guild
 
-	offset := page * core.ItemsPerPage()
+	realPageIdx := page - 1
+	offset := realPageIdx * core.ItemsPerPage()
 	limit := core.ItemsPerPage()
 
 	if err := stmt.Select(&guilds, limit, offset); err != nil {
+		slog.Error(err.Error())
 		return nil, err
 	}
 
