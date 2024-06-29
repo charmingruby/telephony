@@ -11,7 +11,12 @@ import (
 type GuildServiceContract interface {
 	CreateGuild(dto dto.CreateGuildDTO) error
 	FetchAvailableGuilds(pagination core.PaginationParams) ([]entity.Guild, error)
-	// DeleteGuild(dto dto.DeleteGuildDTO) error
+
+	CreateChannel(dto dto.CreateChannelDTO) error
+	FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]entity.Channel, error)
+	JoinChannel(dto dto.JoinChannelDTO) error
+	SendMessage(dto dto.SendMessageDTO) error
+	DeleteMessage(dto dto.DeleteMessageDTO) error
 }
 
 func NewGuildService(
