@@ -68,6 +68,22 @@ definitions:
       status_code:
         type: integer
     type: object
+  endpoint.FetchGuildChannelsRequest:
+    properties:
+      profile_id:
+        type: integer
+    type: object
+  endpoint.FetchGuildChannelsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entity.Channel'
+        type: array
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
   endpoint.MeResponse:
     properties:
       data:
@@ -100,6 +116,34 @@ definitions:
         type: string
       status_code:
         type: integer
+    type: object
+  entity.Channel:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      guild_id:
+        type: integer
+      id:
+        type: integer
+      messages_quantity:
+        type: integer
+      name:
+        maxLength: 36
+        minLength: 1
+        type: string
+      owner_id:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - created_at
+    - guild_id
+    - id
+    - name
+    - owner_id
+    - updated_at
     type: object
   entity.Guild:
     properties:
@@ -308,6 +352,39 @@ paths:
       tags:
       - Guilds
   /guilds/{guild_id}/channels:
+    get:
+      consumes:
+      - application/json
+      description: Fetch paginated channels of a guild
+      parameters:
+      - description: Fetch Guild Channels Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.FetchGuildChannelsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.FetchGuildChannelsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Fetch paginated channels of a guild
+      tags:
+      - Channels
     post:
       consumes:
       - application/json

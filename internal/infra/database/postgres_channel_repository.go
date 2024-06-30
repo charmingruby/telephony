@@ -3,13 +3,15 @@ package database
 import (
 	"log/slog"
 
+	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/jmoiron/sqlx"
 )
 
 const (
-	createChannel     = "create channel"
-	findChannelByName = "find channel by name"
+	createChannel         = "create channel"
+	findChannelByName     = "find channel by name"
+	listChannelsByGuildID = "list channels by guild_id"
 )
 
 func channelQueries() map[string]string {
@@ -18,8 +20,10 @@ func channelQueries() map[string]string {
 		(name, messages_quantity, guild_id, owner_id)
 		VALUES ($1, $2, $3, $4)
 		RETURNING *`,
-		findChannelByName: `SELECT * FROM channels 
-		WHERE name = $1 AND guild_id = $2`,
+		listChannelsByGuildID: `SELECT * FROM channels 
+		WHERE guild_id = $1 AND deleted_at IS NULL
+		LIMIT $2 
+		OFFSET $3`,
 	}
 }
 
@@ -94,5 +98,21 @@ func (r *PostgresChannelRepository) FindByName(guildID int, name string) (*entit
 }
 
 func (r *PostgresChannelRepository) ListChannelsByGuildID(guildID, page int) ([]entity.Channel, error) {
-	return nil, nil
+	stmt, err := r.statement(listChannelsByGuildID)
+	if err != nil {
+		return nil, err
+	}
+
+	var channels []entity.Channel
+
+	realPageIdx := page - 1
+	offset := realPageIdx * core.ItemsPerPage()
+	limit := core.ItemsPerPage()
+
+	if err := stmt.Select(&channels, guildID, limit, offset); err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
+
+	return channels, nil
 }

@@ -225,6 +225,56 @@ const docTemplate = `{
             }
         },
         "/guilds/{guild_id}/channels": {
+            "get": {
+                "description": "Fetch paginated channels of a guild",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Channels"
+                ],
+                "summary": "Fetch paginated channels of a guild",
+                "parameters": [
+                    {
+                        "description": "Fetch Guild Channels Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.FetchGuildChannelsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.FetchGuildChannelsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates a channel",
                 "consumes": [
@@ -506,6 +556,31 @@ const docTemplate = `{
                 }
             }
         },
+        "endpoint.FetchGuildChannelsRequest": {
+            "type": "object",
+            "properties": {
+                "profile_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.FetchGuildChannelsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Channel"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
         "endpoint.MeResponse": {
             "type": "object",
             "properties": {
@@ -552,6 +627,45 @@ const docTemplate = `{
                 },
                 "status_code": {
                     "type": "integer"
+                }
+            }
+        },
+        "entity.Channel": {
+            "type": "object",
+            "required": [
+                "created_at",
+                "guild_id",
+                "id",
+                "name",
+                "owner_id",
+                "updated_at"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "guild_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "messages_quantity": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1
+                },
+                "owner_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
