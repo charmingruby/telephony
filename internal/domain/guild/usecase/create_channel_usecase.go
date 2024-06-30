@@ -43,5 +43,9 @@ func (s *GuildService) CreateChannel(dto dto.CreateChannelDTO) error {
 		return validation.NewInternalErr()
 	}
 
+	if err := s.userClient.GuildJoin(dto.ProfileID); err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -84,3 +84,28 @@ func createSampleGuild(
 
 	return guild, nil
 }
+
+func createSampleChannel(
+	name string,
+	profileID,
+	guildID int,
+	channelRepo *database.PostgresChannelRepository,
+) (*guildEntity.Channel, error) {
+	channel, err := guildEntity.NewChannel(
+		name,
+		guildID,
+		profileID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := channelRepo.Store(channel)
+	if err != nil {
+		return nil, err
+	}
+
+	channel.ID = id
+
+	return channel, nil
+}

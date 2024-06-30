@@ -2,6 +2,8 @@ package endpoint
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,4 +21,15 @@ func getCurrentUser(c *gin.Context) (int, error) {
 	}
 
 	return userIDParsed, nil
+}
+
+func getParamID(c *gin.Context, identifier string) (int, error) {
+	paramID := c.Param(identifier)
+
+	id, err := strconv.Atoi(paramID)
+	if err != nil {
+		return -1, fmt.Errorf("cannot parse `%s`", identifier)
+	}
+
+	return id, nil
 }

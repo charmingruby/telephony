@@ -15,11 +15,11 @@ const (
 func channelQueries() map[string]string {
 	return map[string]string{
 		createChannel: `INSERT INTO channels
-		(name, description, channels_quantity, owner_id)
+		(name, messages_quantity, guild_id, owner_id)
 		VALUES ($1, $2, $3, $4)
 		RETURNING *`,
 		findChannelByName: `SELECT * FROM channels 
-		WHERE name = $1`,
+		WHERE name = $1 AND guild_id = $2`,
 	}
 }
 
@@ -67,6 +67,10 @@ func (r *PostgresChannelRepository) Store(g *entity.Channel) (int, error) {
 	var result entity.Channel
 	if err := stmt.Get(
 		&result,
+		g.Name,
+		g.MessagesQuantity,
+		g.GuildID,
+		g.OwnerID,
 	); err != nil {
 		slog.Error(err.Error())
 		return -1, err
@@ -82,7 +86,7 @@ func (r *PostgresChannelRepository) FindByName(guildID int, name string) (*entit
 	}
 
 	var channel entity.Channel
-	if err := stmt.Get(&channel, name); err != nil {
+	if err := stmt.Get(&channel, name, guildID); err != nil {
 		return nil, err
 	}
 
