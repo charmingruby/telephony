@@ -1,9 +1,6 @@
 package endpoint
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/gin-gonic/gin"
@@ -27,23 +24,10 @@ type FetchAvailableGuildsResponse struct {
 //	@Failure		500		{object}	Response
 //	@Router			/guilds [get]
 func (h *Handler) fetchAvailableGuildsEndpoint(c *gin.Context) {
-	var page int
-
-	pageParams := c.DefaultQuery("page", "1")
-	if pageParams == "" {
-		page = 1
-	}
-
-	convPage, err := strconv.Atoi(pageParams)
+	page, err := getPage(c)
 	if err != nil {
-		NewBadRequestError(c, fmt.Errorf("`%s` is not a valid page", pageParams))
+		NewBadRequestError(c, err)
 		return
-	}
-
-	if convPage <= 0 {
-		page = 1
-	} else {
-		page = convPage
 	}
 
 	params := core.PaginationParams{

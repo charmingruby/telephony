@@ -33,3 +33,25 @@ func getParamID(c *gin.Context, identifier string) (int, error) {
 
 	return id, nil
 }
+
+func getPage(c *gin.Context) (int, error) {
+	var page int
+
+	pageParams := c.DefaultQuery("page", "1")
+	if pageParams == "" {
+		page = 1
+	}
+
+	convPage, err := strconv.Atoi(pageParams)
+	if err != nil {
+		return -1, fmt.Errorf("`%s` is not a valid page", pageParams)
+	}
+
+	if convPage <= 0 {
+		page = 1
+	} else {
+		page = convPage
+	}
+
+	return page, nil
+}
