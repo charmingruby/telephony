@@ -28,6 +28,7 @@ func (s *Suite) Test_CreateGuild() {
 		_, err = s.profileRepo.Store(profile)
 		s.NoError(err)
 		s.Equal(1, len(s.profileRepo.Items))
+		s.Equal(0, s.profileRepo.Items[0].GuildsQuantity)
 
 		dto := dto.CreateGuildDTO{
 			Name:        dummyGuildName,
@@ -40,6 +41,7 @@ func (s *Suite) Test_CreateGuild() {
 
 		s.NoError(err)
 		s.Equal(dummyGuildName, s.guildRepo.Items[0].Name)
+		s.Equal(1, s.profileRepo.Items[0].GuildsQuantity)
 	})
 
 	s.Run("it should be not able to create a guild if profile do not exists", func() {

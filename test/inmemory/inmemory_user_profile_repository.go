@@ -51,9 +51,9 @@ func (r *InMemoryUserProfileRepository) FindByDisplayName(displayName string) (*
 }
 
 func (r *InMemoryUserProfileRepository) UpdateGuildsQuantity(id int, quantity int) error {
-	for _, e := range r.Items {
+	for idx, e := range r.Items {
 		if e.ID == id {
-			e.GuildsQuantity += quantity
+			r.Items[idx].GuildsQuantity = e.GuildsQuantity + quantity
 			return nil
 		}
 	}
@@ -62,9 +62,9 @@ func (r *InMemoryUserProfileRepository) UpdateGuildsQuantity(id int, quantity in
 }
 
 func (r *InMemoryUserProfileRepository) UpdateMessagesQuantity(id int, quantity int) error {
-	for _, e := range r.Items {
+	for idx, e := range r.Items {
 		if e.ID == id {
-			e.MessagesQuantity += quantity
+			r.Items[idx].MessagesQuantity = e.MessagesQuantity + quantity
 			return nil
 		}
 	}
