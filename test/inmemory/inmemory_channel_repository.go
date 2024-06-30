@@ -1,6 +1,7 @@
 package inmemory
 
 import (
+	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/charmingruby/telephony/internal/validation"
 )
@@ -29,4 +30,29 @@ func (r *InMemoryChannelRepository) FindByName(guildID int, name string) (*entit
 	}
 
 	return nil, validation.NewNotFoundErr("channel")
+}
+
+func (r *InMemoryChannelRepository) ListChannelsByGuildID(guildID, page int) ([]entity.Channel, error) {
+	channels := []entity.Channel{}
+
+	pageToFilter := page - 1
+	startValue := pageToFilter * core.ItemsPerPage()
+	endValue := startValue + core.ItemsPerPage()
+
+	if startValue >= len(r.Items) {
+		return channels, nil
+	}
+
+	if endValue > len(r.Items) {
+		endValue = len(r.Items)
+	}
+
+	for i := startValue; i < endValue; i++ {
+		currentItem := r.Items[i]
+		if currentItem.GuildID == guildID {
+			channels = append(channels, currentItem)
+		}
+	}
+
+	return channels, nil
 }

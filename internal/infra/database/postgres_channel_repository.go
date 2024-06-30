@@ -92,3 +92,7 @@ func (r *PostgresChannelRepository) FindByName(guildID int, name string) (*entit
 
 	return &channel, nil
 }
+
+func (r *PostgresChannelRepository) ListChannelsByGuildID(guildID, page int) ([]entity.Channel, error) {
+	return nil, nil
+}
