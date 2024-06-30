@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	createGuild        = "create user"
-	findGuildByID      = "find user by id"
-	findGuildByName    = "find user by email"
+	createGuild        = "create guild"
+	findGuildByID      = "find guild by id"
+	findGuildByName    = "find guild by email"
 	listAvailableGuild = "list paginated available guilds"
 	deleteGuild        = "delete a guild"
 )
