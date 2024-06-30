@@ -33,6 +33,7 @@ type Suite struct {
 	userRepo    *database.PostgresUserRepository
 	profileRepo *database.PostgresUserProfileRepository
 	guildRepo   *database.PostgresGuildRepository
+	channelRepo *database.PostgresChannelRepository
 }
 
 func (s *Suite) SetupSuite() {
@@ -85,10 +86,17 @@ func (s *Suite) setupDependencies() {
 	}
 	s.guildRepo = guildRepo
 
+	channelRepo, err := database.NewPostgresChannelRepository(s.container.DB)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+	s.channelRepo = channelRepo
+
 	userClient := client.NewUserClient(s.profileRepo, s.userRepo)
 
 	userSvc := userUc.NewUserService(s.userRepo, s.profileRepo, cryptography.NewCryptography())
-	guildSvc := usecase.NewGuildService(s.guildRepo, userClient)
+	guildSvc := usecase.NewGuildService(s.guildRepo, channelRepo, userClient)
 
 	s.token = token.NewJWTService("secret", "telephony")
 

@@ -97,12 +97,18 @@ func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 		os.Exit(1)
 	}
 
+	channelRepo, err := database.NewPostgresChannelRepository(db)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
 	userClient := client.NewUserClient(profileRepo, userRepo)
 	token := token.NewJWTService(cfg.JWTConfig.SecretKey, cfg.JWTConfig.Issuer)
 	crypto := cryptography.NewCryptography()
 
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
-	guildSvc := guildUc.NewGuildService(guildRepo, userClient)
+	guildSvc := guildUc.NewGuildService(guildRepo, channelRepo, userClient)
 
 	endpoint.NewHandler(router, token, userSvc, guildSvc).Register()
 }

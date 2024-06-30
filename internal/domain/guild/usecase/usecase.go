@@ -11,7 +11,6 @@ import (
 type GuildServiceContract interface {
 	CreateGuild(dto dto.CreateGuildDTO) error
 	FetchAvailableGuilds(pagination core.PaginationParams) ([]entity.Guild, error)
-
 	CreateChannel(dto dto.CreateChannelDTO) error
 	FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]entity.Channel, error)
 	JoinChannel(dto dto.JoinChannelDTO) error
@@ -21,15 +20,18 @@ type GuildServiceContract interface {
 
 func NewGuildService(
 	guildRepo repository.GuildRepository,
+	channelRepo repository.ChannelRepository,
 	userClient client.UserClient,
 ) *GuildService {
 	return &GuildService{
-		guildRepo:  guildRepo,
-		userClient: userClient,
+		guildRepo:   guildRepo,
+		channelRepo: channelRepo,
+		userClient:  userClient,
 	}
 }
 
 type GuildService struct {
-	guildRepo  repository.GuildRepository
-	userClient client.UserClient
+	guildRepo   repository.GuildRepository
+	channelRepo repository.ChannelRepository
+	userClient  client.UserClient
 }
