@@ -15,7 +15,7 @@ type CreateChannelRequest struct {
 //
 //	@Summary		Creates a channel
 //	@Description	Creates a channel
-//	@Tags			Guilds
+//	@Tags			Channels
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		CreateChannelRequest	true	"Create Channel Payload"
@@ -25,7 +25,7 @@ type CreateChannelRequest struct {
 //	@Failure		409		{object}	Response
 //	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
-//	@Router			/guilds [post]
+//	@Router			/guilds/{guild_id}/channels [post]
 func (h *Handler) createChannelEndpoint(c *gin.Context) {
 	userID, err := getCurrentUser(c)
 	if err != nil {

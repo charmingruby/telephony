@@ -77,7 +77,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Create a New user",
+                "description": "Creates an user",
                 "consumes": [
                     "application/json"
                 ],
@@ -87,7 +87,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Create user",
+                "summary": "Creates an user",
                 "parameters": [
                     {
                         "description": "Create User Payload",
@@ -127,9 +127,170 @@ const docTemplate = `{
                 }
             }
         },
+        "/guilds": {
+            "get": {
+                "description": "Fetch available guilds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Fetch available guilds",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.FetchAvailableGuildsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a guild",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guilds"
+                ],
+                "summary": "Creates a guild",
+                "parameters": [
+                    {
+                        "description": "Create Guild Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.CreateGuildRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/guilds/{guild_id}/channels": {
+            "post": {
+                "description": "Creates a channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Channels"
+                ],
+                "summary": "Creates a channel",
+                "parameters": [
+                    {
+                        "description": "Create Channel Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.CreateChannelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/me": {
             "get": {
-                "description": "Get authenticated user profile",
+                "description": "Gets authenticated user profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -139,7 +300,7 @@ const docTemplate = `{
                 "tags": [
                     "Profiles"
                 ],
-                "summary": "Get authenticated user profile",
+                "summary": "Gets authenticated user profile",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -164,7 +325,7 @@ const docTemplate = `{
         },
         "/me/profile": {
             "post": {
-                "description": "Create an user profile",
+                "description": "Creates an user profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -174,7 +335,7 @@ const docTemplate = `{
                 "tags": [
                     "Profiles"
                 ],
-                "summary": "Create an user profile",
+                "summary": "Creates an user profile",
                 "parameters": [
                     {
                         "description": "Create Profile Payload",
@@ -229,7 +390,7 @@ const docTemplate = `{
                 "tags": [
                     "Health"
                 ],
-                "summary": "Welcome",
+                "summary": "Health Check",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -242,12 +403,45 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "endpoint.CreateChannelRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "profile_id"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.CreateGuildRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "profile_id"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "endpoint.CreateProfileRequest": {
             "type": "object",
             "required": [
                 "bio",
-                "display_name",
-                "user_id"
+                "display_name"
             ],
             "properties": {
                 "bio": {
@@ -255,9 +449,6 @@ const docTemplate = `{
                 },
                 "display_name": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -289,6 +480,23 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/endpoint.CredentialsAuthData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.FetchAvailableGuildsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Guild"
+                    }
                 },
                 "message": {
                     "type": "string"
@@ -344,6 +552,47 @@ const docTemplate = `{
                 },
                 "status_code": {
                     "type": "integer"
+                }
+            }
+        },
+        "entity.Guild": {
+            "type": "object",
+            "required": [
+                "created_at",
+                "description",
+                "id",
+                "name",
+                "owner_id",
+                "updated_at"
+            ],
+            "properties": {
+                "channels_quantity": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 36,
+                    "minLength": 1
+                },
+                "owner_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },

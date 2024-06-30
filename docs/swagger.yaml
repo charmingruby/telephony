@@ -1,17 +1,37 @@
 basePath: /api/v1
 definitions:
+  endpoint.CreateChannelRequest:
+    properties:
+      name:
+        type: string
+      profile_id:
+        type: integer
+    required:
+    - name
+    - profile_id
+    type: object
+  endpoint.CreateGuildRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      profile_id:
+        type: integer
+    required:
+    - description
+    - name
+    - profile_id
+    type: object
   endpoint.CreateProfileRequest:
     properties:
       bio:
         type: string
       display_name:
         type: string
-      user_id:
-        type: integer
     required:
     - bio
     - display_name
-    - user_id
     type: object
   endpoint.CredentialsAuthData:
     properties:
@@ -32,6 +52,17 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/endpoint.CredentialsAuthData'
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  endpoint.FetchAvailableGuildsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entity.Guild'
+        type: array
       message:
         type: string
       status_code:
@@ -69,6 +100,36 @@ definitions:
         type: string
       status_code:
         type: integer
+    type: object
+  entity.Guild:
+    properties:
+      channels_quantity:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        maxLength: 255
+        minLength: 1
+        type: string
+      id:
+        type: integer
+      name:
+        maxLength: 36
+        minLength: 1
+        type: string
+      owner_id:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - created_at
+    - description
+    - id
+    - name
+    - owner_id
+    - updated_at
     type: object
   entity.UserProfile:
     properties:
@@ -152,7 +213,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a New user
+      description: Creates an user
       parameters:
       - description: Create User Payload
         in: body
@@ -179,14 +240,120 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/endpoint.Response'
-      summary: Create user
+      summary: Creates an user
       tags:
       - Users
+  /guilds:
+    get:
+      consumes:
+      - application/json
+      description: Fetch available guilds
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.FetchAvailableGuildsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Fetch available guilds
+      tags:
+      - Guilds
+    post:
+      consumes:
+      - application/json
+      description: Creates a guild
+      parameters:
+      - description: Create Guild Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.CreateGuildRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Creates a guild
+      tags:
+      - Guilds
+  /guilds/{guild_id}/channels:
+    post:
+      consumes:
+      - application/json
+      description: Creates a channel
+      parameters:
+      - description: Create Channel Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.CreateChannelRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Creates a channel
+      tags:
+      - Channels
   /me:
     get:
       consumes:
       - application/json
-      description: Get authenticated user profile
+      description: Gets authenticated user profile
       produces:
       - application/json
       responses:
@@ -202,14 +369,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/endpoint.Response'
-      summary: Get authenticated user profile
+      summary: Gets authenticated user profile
       tags:
       - Profiles
   /me/profile:
     post:
       consumes:
       - application/json
-      description: Create an user profile
+      description: Creates an user profile
       parameters:
       - description: Create Profile Payload
         in: body
@@ -240,7 +407,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/endpoint.Response'
-      summary: Create an user profile
+      summary: Creates an user profile
       tags:
       - Profiles
   /welcome:
@@ -253,7 +420,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/endpoint.Response'
-      summary: Welcome
+      summary: Health Check
       tags:
       - Health
 securityDefinitions:
