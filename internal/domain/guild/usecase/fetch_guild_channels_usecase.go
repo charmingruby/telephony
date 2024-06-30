@@ -7,19 +7,11 @@ import (
 )
 
 func (s *GuildService) FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]entity.Channel, error) {
-	userExists := s.userClient.UserExists(dto.UserID)
-	if !userExists {
-		return nil, validation.NewNotFoundErr("user")
-	}
-
-	profileExists := s.userClient.ProfileExists(dto.ProfileID)
-	if !profileExists {
-		return nil, validation.NewNotFoundErr("user_profile")
-	}
-
-	isTheProfileOwner := s.userClient.IsTheProfileOwner(dto.UserID, dto.ProfileID)
-	if !isTheProfileOwner {
-		return nil, validation.NewUnauthorizedErr()
+	if err := s.userProfileValidation(
+		dto.ProfileID,
+		dto.UserID,
+	); err != nil {
+		return nil, err
 	}
 
 	_, err := s.guildRepo.FindByID(dto.GuildID)

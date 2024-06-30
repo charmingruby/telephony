@@ -7,23 +7,20 @@ import (
 )
 
 func (s *GuildService) CreateChannel(dto dto.CreateChannelDTO) error {
-	userExists := s.userClient.UserExists(dto.UserID)
-	if !userExists {
-		return validation.NewNotFoundErr("user")
+	if err := s.userProfileValidation(
+		dto.ProfileID,
+		dto.UserID,
+	); err != nil {
+		return err
 	}
 
-	profileExists := s.userClient.ProfileExists(dto.ProfileID)
-	if !profileExists {
-		return validation.NewNotFoundErr("user_profile")
-	}
-
-	isTheProfileOwner := s.userClient.IsTheProfileOwner(dto.UserID, dto.ProfileID)
-	if !isTheProfileOwner {
-		return validation.NewUnauthorizedErr()
-	}
-
-	if _, err := s.guildRepo.FindByID(dto.GuildID); err != nil {
+	guild, err := s.guildRepo.FindByID(dto.GuildID)
+	if err != nil {
 		return validation.NewNotFoundErr("guild")
+	}
+
+	if guild.OwnerID != dto.ProfileID {
+		return validation.NewUnauthorizedErr()
 	}
 
 	if _, err := s.channelRepo.FindByName(dto.GuildID, dto.Name); err == nil {

@@ -20,6 +20,8 @@ func channelQueries() map[string]string {
 		(name, messages_quantity, guild_id, owner_id)
 		VALUES ($1, $2, $3, $4)
 		RETURNING *`,
+		findChannelByName: `SELECT * FROM channels
+		WHERE guild_id = $1 AND name = $2 AND deleted_at IS NULL`,
 		listChannelsByGuildID: `SELECT * FROM channels 
 		WHERE guild_id = $1 AND deleted_at IS NULL
 		LIMIT $2 
@@ -90,7 +92,7 @@ func (r *PostgresChannelRepository) FindByName(guildID int, name string) (*entit
 	}
 
 	var channel entity.Channel
-	if err := stmt.Get(&channel, name, guildID); err != nil {
+	if err := stmt.Get(&channel, guildID, name); err != nil {
 		return nil, err
 	}
 
