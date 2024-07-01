@@ -11,6 +11,7 @@ import (
 type GuildServiceContract interface {
 	CreateGuild(dto dto.CreateGuildDTO) error
 	FetchAvailableGuilds(pagination core.PaginationParams) ([]entity.Guild, error)
+	JoinGuild(dto dto.JoinGuildDTO) error
 	CreateChannel(dto dto.CreateChannelDTO) error
 	FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]entity.Channel, error)
 	JoinChannel(dto dto.JoinChannelDTO) error

@@ -43,6 +43,7 @@ func (s *Suite) TearDownTest() {
 func (s *Suite) TearDownSubTest() {
 	s.profileRepo.Items = []userEntity.UserProfile{}
 	s.userRepo.Items = []userEntity.User{}
+	s.guildRepo.Items = []guildEntity.Guild{}
 	s.memberRepo.Items = []guildEntity.GuildMember{}
 	s.channelRepo.Items = []guildEntity.Channel{}
 }

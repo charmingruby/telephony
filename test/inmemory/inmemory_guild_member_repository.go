@@ -22,7 +22,7 @@ func (r *InMemoryGuildMemberRepository) Store(m *entity.GuildMember) (int, error
 
 func (r *InMemoryGuildMemberRepository) IsAGuildMember(profileID, userID, guildID int) (*entity.GuildMember, error) {
 	for _, e := range r.Items {
-		if e.ProfileID == profileID && e.GuildID == guildID && e.UserID == userID {
+		if e.ProfileID == profileID && e.GuildID == guildID && e.UserID == userID && e.IsActive {
 			return &e, nil
 		}
 	}

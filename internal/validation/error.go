@@ -32,6 +32,20 @@ func (e *ErrNotFound) Error() string {
 	return e.Message
 }
 
+func NewBadRequestErr(msg string) error {
+	return &ErrBadRequest{
+		Message: msg,
+	}
+}
+
+type ErrBadRequest struct {
+	Message string `json:"message"`
+}
+
+func (e *ErrBadRequest) Error() string {
+	return e.Message
+}
+
 func NewInvalidCredentialsErr() error {
 	return &ErrInvalidCredentials{
 		Message: "invalid credentials",

@@ -19,7 +19,7 @@ func guildMemberQueries() map[string]string {
 		VALUES ($1, $2, $3, $4)
 		RETURNING *`,
 		isAGuildMember: `SELECT * FROM guild_members
-		WHERE guild_id = $1 AND user_id = $2 AND profile_id = $3`,
+		WHERE guild_id = $1 AND user_id = $2 AND profile_id = $3 AND is_active = true`,
 	}
 }
 
