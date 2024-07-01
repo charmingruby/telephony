@@ -19,6 +19,10 @@ func (s *GuildService) CreateChannel(dto dto.CreateChannelDTO) error {
 		return validation.NewNotFoundErr("guild")
 	}
 
+	if _, err := s.memberRepo.IsAGuildMember(dto.ProfileID, dto.UserID, dto.GuildID); err != nil {
+		return validation.NewUnauthorizedErr()
+	}
+
 	if guild.OwnerID != dto.ProfileID {
 		return validation.NewUnauthorizedErr()
 	}
