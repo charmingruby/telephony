@@ -97,6 +97,12 @@ func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 		os.Exit(1)
 	}
 
+	guildMemberRepo, err := database.NewPostgresGuildMemberRepository(db)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+
 	channelRepo, err := database.NewPostgresChannelRepository(db)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
@@ -108,7 +114,7 @@ func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 	crypto := cryptography.NewCryptography()
 
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
-	guildSvc := guildUc.NewGuildService(guildRepo, channelRepo, userClient)
+	guildSvc := guildUc.NewGuildService(guildRepo, guildMemberRepo, channelRepo, userClient)
 
 	endpoint.NewHandler(router, token, userSvc, guildSvc).Register()
 }

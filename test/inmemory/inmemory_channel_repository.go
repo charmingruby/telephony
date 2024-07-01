@@ -19,7 +19,6 @@ type InMemoryChannelRepository struct {
 func (r *InMemoryChannelRepository) Store(e *entity.Channel) (int, error) {
 	r.Items = append(r.Items, *e)
 	return e.ID, nil
-
 }
 
 func (r *InMemoryChannelRepository) FindByName(guildID int, name string) (*entity.Channel, error) {

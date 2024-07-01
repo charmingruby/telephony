@@ -20,11 +20,13 @@ type GuildServiceContract interface {
 
 func NewGuildService(
 	guildRepo repository.GuildRepository,
+	memberRepo repository.GuildMemberRepository,
 	channelRepo repository.ChannelRepository,
 	userClient client.UserClient,
 ) *GuildService {
 	return &GuildService{
 		guildRepo:   guildRepo,
+		memberRepo:  memberRepo,
 		channelRepo: channelRepo,
 		userClient:  userClient,
 	}
@@ -32,6 +34,7 @@ func NewGuildService(
 
 type GuildService struct {
 	guildRepo   repository.GuildRepository
+	memberRepo  repository.GuildMemberRepository
 	channelRepo repository.ChannelRepository
 	userClient  client.UserClient
 }

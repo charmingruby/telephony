@@ -1,11 +1,9 @@
-version: '3'
-
 services:
   # development database
   postgres:
     container_name: telephony-pg
     image: bitnami/postgresql:latest
-    ports: 
+    ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
@@ -18,16 +16,16 @@ services:
       timeout: 5s
 
   app:
-    container_name: telephony-api 
+    container_name: telephony-api
     image: telephony
     depends_on:
       postgres:
-        condition: service_healthy 
-    build: 
+        condition: service_healthy
+    build:
       context: .
       dockerfile: Dockerfile
     # depends on the api port
-    ports: 
+    ports:
       - "3000:3000"
     env_file:
       - .env

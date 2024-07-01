@@ -26,14 +26,15 @@ const (
 
 type Suite struct {
 	suite.Suite
-	container   *container.TestDatabase
-	server      *httptest.Server
-	handler     *endpoint.Handler
-	token       *token.JWTService
-	userRepo    *database.PostgresUserRepository
-	profileRepo *database.PostgresUserProfileRepository
-	guildRepo   *database.PostgresGuildRepository
-	channelRepo *database.PostgresChannelRepository
+	container       *container.TestDatabase
+	server          *httptest.Server
+	handler         *endpoint.Handler
+	token           *token.JWTService
+	userRepo        *database.PostgresUserRepository
+	profileRepo     *database.PostgresUserProfileRepository
+	guildRepo       *database.PostgresGuildRepository
+	guildMemberRepo *database.PostgresGuildMemberRepository
+	channelRepo     *database.PostgresChannelRepository
 }
 
 func (s *Suite) SetupSuite() {
@@ -86,6 +87,13 @@ func (s *Suite) setupDependencies() {
 	}
 	s.guildRepo = guildRepo
 
+	memberRepo, err := database.NewPostgresGuildMemberRepository(s.container.DB)
+	if err != nil {
+		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
+		os.Exit(1)
+	}
+	s.guildMemberRepo = memberRepo
+
 	channelRepo, err := database.NewPostgresChannelRepository(s.container.DB)
 	if err != nil {
 		slog.Error(fmt.Sprintf("DATABASE REPOSITORY: %s", err.Error()))
@@ -96,7 +104,7 @@ func (s *Suite) setupDependencies() {
 	userClient := client.NewUserClient(s.profileRepo, s.userRepo)
 
 	userSvc := userUc.NewUserService(s.userRepo, s.profileRepo, cryptography.NewCryptography())
-	guildSvc := usecase.NewGuildService(s.guildRepo, channelRepo, userClient)
+	guildSvc := usecase.NewGuildService(s.guildRepo, s.guildMemberRepo, channelRepo, userClient)
 
 	s.token = token.NewJWTService("secret", "telephony")
 
