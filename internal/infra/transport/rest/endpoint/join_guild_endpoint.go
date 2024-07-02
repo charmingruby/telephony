@@ -19,6 +19,7 @@ type JoinGuildRequest struct {
 //	@Produce		json
 //	@Param			request	body		JoinGuildRequest	true	"Join Guild Payload"
 //	@Success		200		{object}	Response
+//	@Failure		400		{object}	Response
 //	@Failure		401		{object}	Response
 //	@Failure		404		{object}	Response
 //	@Failure		409		{object}	Response
