@@ -157,6 +157,6 @@ func (s *Suite) Test_JoinGuild() {
 		err = s.guildService.JoinGuild(dto)
 
 		s.Error(err)
-		s.Equal(validation.NewBadRequestErr("is already member").Error(), err.Error())
+		s.Equal(validation.NewBadRequestErr("user profile is already a member").Error(), err.Error())
 	})
 }

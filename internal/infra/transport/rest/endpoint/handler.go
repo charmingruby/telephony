@@ -52,6 +52,8 @@ func (h *Handler) Register() {
 
 		v1.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
 		v1.GET("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.fetchGuildChannelsEndpoint)
+
+		v1.POST("/guilds/:guild_id/join", middleware.AuthMiddleware(h.token), h.joinGuildEndpoint)
 	}
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

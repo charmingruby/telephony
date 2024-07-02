@@ -12,7 +12,7 @@ func (s *GuildService) JoinGuild(dto dto.JoinGuildDTO) error {
 	}
 
 	if _, err := s.memberRepo.IsAGuildMember(dto.ProfileID, dto.UserID, dto.GuildID); err == nil {
-		return validation.NewBadRequestErr("is already member")
+		return validation.NewBadRequestErr("user profile is already a member")
 	}
 
 	member, err := entity.NewGuildMember(dto.ProfileID, dto.UserID, dto.GuildID)
