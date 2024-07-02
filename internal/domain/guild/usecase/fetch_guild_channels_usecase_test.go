@@ -24,6 +24,9 @@ func (s *Suite) Test_FetchGuildChannels() {
 	)
 	s.NoError(err)
 
+	member, err := guildEntity.NewGuildMember(profile.ID, user.ID, guild.ID)
+	s.NoError(err)
+
 	dummyChannelName := "dummy name"
 
 	s.Run("it should be able to fetch guild channels", func() {
@@ -38,6 +41,10 @@ func (s *Suite) Test_FetchGuildChannels() {
 		_, err = s.guildRepo.Store(guild)
 		s.NoError(err)
 		s.Equal(1, len(s.guildRepo.Items))
+
+		_, err = s.memberRepo.Store(member)
+		s.NoError(err)
+		s.Equal(1, len(s.memberRepo.Items))
 
 		for i := 0; i < core.ItemsPerPage()+1; i++ {
 			ch, err := guildEntity.NewChannel(
@@ -81,6 +88,10 @@ func (s *Suite) Test_FetchGuildChannels() {
 		_, err = s.guildRepo.Store(guild)
 		s.NoError(err)
 		s.Equal(1, len(s.guildRepo.Items))
+
+		_, err = s.memberRepo.Store(member)
+		s.NoError(err)
+		s.Equal(1, len(s.memberRepo.Items))
 
 		for i := 0; i < core.ItemsPerPage()*2; i++ {
 			if i%2 == 0 {
@@ -138,6 +149,10 @@ func (s *Suite) Test_FetchGuildChannels() {
 		_, err = s.guildRepo.Store(guild)
 		s.NoError(err)
 		s.Equal(1, len(s.guildRepo.Items))
+
+		_, err = s.memberRepo.Store(member)
+		s.NoError(err)
+		s.Equal(1, len(s.memberRepo.Items))
 
 		dto := dto.FetchGuildChannelsDTO{
 			UserID:    user.ID,
@@ -218,6 +233,35 @@ func (s *Suite) Test_FetchGuildChannels() {
 		dto := dto.FetchGuildChannelsDTO{
 			ProfileID: otherUserProfile.ID,
 			UserID:    user.ID,
+			GuildID:   guild.ID,
+			Pagination: core.PaginationParams{
+				Page: 1,
+			},
+		}
+
+		channels, err := s.guildService.FetchGuildChannels(dto)
+
+		s.Error(err)
+		s.Nil(channels)
+		s.Equal(validation.NewUnauthorizedErr().Error(), err.Error())
+	})
+
+	s.Run("it should be not to fetch guild channels if its not a member", func() {
+		_, err := s.userRepo.Store(user)
+		s.NoError(err)
+		s.Equal(1, len(s.userRepo.Items))
+
+		_, err = s.profileRepo.Store(profile)
+		s.NoError(err)
+		s.Equal(1, len(s.profileRepo.Items))
+
+		_, err = s.guildRepo.Store(guild)
+		s.NoError(err)
+		s.Equal(1, len(s.guildRepo.Items))
+
+		dto := dto.FetchGuildChannelsDTO{
+			UserID:    user.ID,
+			ProfileID: profile.ID,
 			GuildID:   guild.ID,
 			Pagination: core.PaginationParams{
 				Page: 1,

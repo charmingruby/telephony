@@ -19,6 +19,10 @@ func (s *GuildService) FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]enti
 		return nil, validation.NewNotFoundErr("guild")
 	}
 
+	if _, err := s.memberRepo.IsAGuildMember(dto.ProfileID, dto.UserID, dto.GuildID); err != nil {
+		return nil, validation.NewUnauthorizedErr()
+	}
+
 	channels, err := s.channelRepo.ListChannelsByGuildID(dto.GuildID, dto.Pagination.Page)
 	if err != nil {
 		return nil, err
