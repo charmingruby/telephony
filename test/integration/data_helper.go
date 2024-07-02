@@ -109,3 +109,28 @@ func createSampleChannel(
 
 	return channel, nil
 }
+
+func createSampleMember(
+	userID,
+	profileID,
+	guildID int,
+	memberRepo *database.PostgresGuildMemberRepository,
+) (*guildEntity.GuildMember, error) {
+	member, err := guildEntity.NewGuildMember(
+		profileID,
+		userID,
+		guildID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := memberRepo.Store(member)
+	if err != nil {
+		return nil, err
+	}
+
+	member.ID = id
+
+	return member, nil
+}

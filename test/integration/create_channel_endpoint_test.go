@@ -19,6 +19,8 @@ func (s *Suite) Test_CreateChannelEndpoint() {
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "dummy name", s.guildRepo)
 		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
+		s.NoError(err)
 
 		payload := endpoint.CreateChannelRequest{
 			Name:      dummyName,
@@ -45,6 +47,41 @@ func (s *Suite) Test_CreateChannelEndpoint() {
 
 		s.Equal("channel created successfully", data.Message)
 		s.Equal(http.StatusCreated, data.Code)
+	})
+
+	s.Run("it should be not able to create a channel if its not a member", func() {
+		user, err := createSampleUser("dummy@email.com", s.userRepo)
+		s.NoError(err)
+		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
+		s.NoError(err)
+		guild, err := createSampleGuild(profile.ID, "dummy name", s.guildRepo)
+		s.NoError(err)
+
+		payload := endpoint.CreateChannelRequest{
+			Name:      dummyName,
+			ProfileID: profile.ID,
+		}
+		body, err := json.Marshal(payload)
+		s.NoError(err)
+
+		client := &http.Client{}
+		req, err := http.NewRequest(http.MethodPost, s.Route(fmt.Sprintf("/v1/guilds/%d/channels", guild.ID)), writeBody(body))
+		s.NoError(err)
+		err = authenticate(s.token, req, user.ID)
+		s.NoError(err)
+		res, err := client.Do(req)
+		s.NoError(err)
+
+		defer res.Body.Close()
+
+		s.Equal(http.StatusUnauthorized, res.StatusCode)
+
+		var data endpoint.Response
+		err = parsePayload[endpoint.Response](&data, res.Body)
+		s.NoError(err)
+
+		s.Equal(validation.NewUnauthorizedErr().Error(), data.Message)
+		s.Equal(http.StatusUnauthorized, data.Code)
 	})
 
 	s.Run("it should be not able to create a channel if profile dont exists", func() {
@@ -189,6 +226,8 @@ func (s *Suite) Test_CreateChannelEndpoint() {
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "guild name", s.guildRepo)
 		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
+		s.NoError(err)
 		_, err = createSampleChannel(conflictingName, profile.ID, guild.ID, s.channelRepo)
 		s.NoError(err)
 
@@ -225,6 +264,8 @@ func (s *Suite) Test_CreateChannelEndpoint() {
 		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "dummy name", s.guildRepo)
+		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
 		s.NoError(err)
 
 		payload := endpoint.CreateChannelRequest{

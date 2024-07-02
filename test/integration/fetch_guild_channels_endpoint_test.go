@@ -23,6 +23,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 		s.NoError(err)
 		anotherGuild, err := createSampleGuild(profile.ID, "dummy guild name 2", s.guildRepo)
 		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guildToBeFiltedBy.ID, s.guildMemberRepo)
+		s.NoError(err)
 
 		totalChannels := 4
 		createdChannels := []entity.Channel{}
@@ -81,12 +83,49 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 		}
 	})
 
+	s.Run("it should be not able fetch guild channels if its not a guild member", func() {
+		user, err := createSampleUser("dummy@email.com", s.userRepo)
+		s.NoError(err)
+		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
+		s.NoError(err)
+		guild, err := createSampleGuild(profile.ID, "dummy guild name 1", s.guildRepo)
+		s.NoError(err)
+
+		payload := endpoint.FetchGuildChannelsRequest{
+			ProfileID: profile.ID,
+		}
+		body, err := json.Marshal(payload)
+		s.NoError(err)
+
+		client := &http.Client{}
+		rawRoute := fmt.Sprintf("/v1/guilds/%d/channels?page=1", guild.ID)
+		req, err := http.NewRequest(http.MethodGet, s.Route(rawRoute), writeBody(body))
+		s.NoError(err)
+		err = authenticate(s.token, req, user.ID)
+		s.NoError(err)
+		res, err := client.Do(req)
+		s.NoError(err)
+
+		defer res.Body.Close()
+
+		s.Equal(http.StatusUnauthorized, res.StatusCode)
+
+		var data endpoint.FetchGuildChannelsResponse
+		err = parsePayload[endpoint.FetchGuildChannelsResponse](&data, res.Body)
+		s.NoError(err)
+
+		s.Equal(http.StatusUnauthorized, data.Code)
+		s.Equal(validation.NewUnauthorizedErr().Error(), data.Message)
+	})
+
 	s.Run("it should be able fetch guild channels even if is passing an empty page", func() {
 		user, err := createSampleUser("dummy@email.com", s.userRepo)
 		s.NoError(err)
 		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "dummy guild name", s.guildRepo)
+		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
 		s.NoError(err)
 
 		payload := endpoint.FetchGuildChannelsRequest{
@@ -123,6 +162,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "dummy guild name", s.guildRepo)
+		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
 		s.NoError(err)
 
 		totalChannels := core.ItemsPerPage() + 4
@@ -180,6 +221,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "dummy guild name 1", s.guildRepo)
+		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
 		s.NoError(err)
 
 		totalChannels := 4
@@ -267,6 +310,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 		profile, err := createSampleUserProfile(user.ID, "dummy nick", s.profileRepo)
 		s.NoError(err)
 		guild, err := createSampleGuild(profile.ID, "dummy guild name 1", s.guildRepo)
+		s.NoError(err)
+		_, err = createSampleMember(profile.ID, user.ID, guild.ID, s.guildMemberRepo)
 		s.NoError(err)
 
 		totalChannels := core.ItemsPerPage() + 1
