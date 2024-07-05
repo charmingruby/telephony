@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"github.com/charmingruby/telephony/internal/domain/user/dto"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ type RegisterRequest struct {
 func (h *Handler) registerEndpoint(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
+		connhelper.NewPayloadError(c, err)
 		return
 	}
 
@@ -43,18 +44,18 @@ func (h *Handler) registerEndpoint(c *gin.Context) {
 	if err := h.userService.Register(dto); err != nil {
 		validationErr, ok := err.(*validation.ErrValidation)
 		if ok {
-			NewEntityError(c, validationErr)
+			connhelper.NewEntityError(c, validationErr)
 			return
 		}
 
 		conflictErr, ok := err.(*validation.ErrConflict)
 		if ok {
-			NewConflicError(c, conflictErr)
+			connhelper.NewConflicError(c, conflictErr)
 			return
 		}
 
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
-	NewCreatedResponse(c, "user")
+	connhelper.NewCreatedResponse(c, "user")
 }

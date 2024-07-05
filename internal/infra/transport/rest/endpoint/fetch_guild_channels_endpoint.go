@@ -4,6 +4,7 @@ import (
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
@@ -33,27 +34,27 @@ type FetchGuildChannelsResponse struct {
 // @Failure		500		{object}	Response
 // @Router			/guilds/{guild_id}/channels [get]
 func (h *Handler) fetchGuildChannelsEndpoint(c *gin.Context) {
-	guildID, err := getParamID(c, "guild_id")
+	guildID, err := connhelper.GetParamID(c, "guild_id")
 	if err != nil {
-		NewBadRequestError(c, err)
+		connhelper.NewBadRequestError(c, err)
 		return
 	}
 
-	userID, err := getCurrentUser(c)
+	userID, err := connhelper.GetCurrentUser(c)
 	if err != nil {
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	page, err := getPage(c)
+	page, err := connhelper.GetPage(c)
 	if err != nil {
-		NewBadRequestError(c, err)
+		connhelper.NewBadRequestError(c, err)
 		return
 	}
 
 	var req FetchGuildChannelsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
+		connhelper.NewPayloadError(c, err)
 		return
 	}
 
@@ -70,19 +71,19 @@ func (h *Handler) fetchGuildChannelsEndpoint(c *gin.Context) {
 	if err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
-			NewResourceNotFoundError(c, notFoundErr)
+			connhelper.NewResourceNotFoundError(c, notFoundErr)
 			return
 		}
 
 		unauthorizedErr, ok := err.(*validation.ErrUnathorized)
 		if ok {
-			NewUnauthorizedErr(c, unauthorizedErr.Error())
+			connhelper.NewUnauthorizedErr(c, unauthorizedErr.Error())
 			return
 		}
 
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	NewOkResponse(c, "guild channels fetched", channels)
+	connhelper.NewOkResponse(c, "guild channels fetched", channels)
 }

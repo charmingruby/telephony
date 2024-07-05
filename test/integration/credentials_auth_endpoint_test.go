@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmingruby/telephony/internal/domain/user/entity"
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 )
 
@@ -68,8 +69,8 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 
 		s.Equal(http.StatusUnauthorized, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("invalid credentials", data.Message)
@@ -92,8 +93,8 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 
 		s.Equal(http.StatusUnauthorized, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("invalid credentials", data.Message)
@@ -113,8 +114,8 @@ func (s *Suite) Test_CredentialsAuthEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, data.Code)

@@ -3,6 +3,7 @@ package endpoint
 import (
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,9 +25,9 @@ type FetchAvailableGuildsResponse struct {
 //	@Failure		500		{object}	Response
 //	@Router			/guilds [get]
 func (h *Handler) fetchAvailableGuildsEndpoint(c *gin.Context) {
-	page, err := getPage(c)
+	page, err := connhelper.GetPage(c)
 	if err != nil {
-		NewBadRequestError(c, err)
+		connhelper.NewBadRequestError(c, err)
 		return
 	}
 
@@ -36,9 +37,9 @@ func (h *Handler) fetchAvailableGuildsEndpoint(c *gin.Context) {
 
 	guilds, err := h.guildService.FetchAvailableGuilds(params)
 	if err != nil {
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	NewOkResponse(c, "available guilds fetched", guilds)
+	connhelper.NewOkResponse(c, "available guilds fetched", guilds)
 }

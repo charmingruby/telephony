@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"github.com/charmingruby/telephony/internal/domain/user/dto"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
@@ -37,7 +38,7 @@ type CredentialsAuthResponse struct {
 func (h *Handler) credentialsAuthEndpoint(c *gin.Context) {
 	var req CredentialsAuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
+		connhelper.NewPayloadError(c, err)
 		return
 	}
 
@@ -50,17 +51,17 @@ func (h *Handler) credentialsAuthEndpoint(c *gin.Context) {
 	if err != nil {
 		invalidCredentialsErr, ok := err.(*validation.ErrInvalidCredentials)
 		if ok {
-			NewInvalidCredentialsError(c, invalidCredentialsErr)
+			connhelper.NewInvalidCredentialsError(c, invalidCredentialsErr)
 			return
 		}
 
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
 	token, err := h.token.GenerateToken(res.UserID)
 	if err != nil {
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
@@ -68,5 +69,5 @@ func (h *Handler) credentialsAuthEndpoint(c *gin.Context) {
 		AccessToken: token,
 	}
 
-	NewOkResponse(c, "user authenticated successfully", data)
+	connhelper.NewOkResponse(c, "user authenticated successfully", data)
 }

@@ -3,8 +3,8 @@ package integration
 import (
 	"net/http"
 
+	"github.com/charmingruby/telephony/internal/infra/transport/common/middleware"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
-	"github.com/charmingruby/telephony/internal/infra/transport/rest/middleware"
 )
 
 func (s *Suite) Test_MeEndpoint() {

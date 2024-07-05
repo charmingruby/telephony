@@ -332,6 +332,76 @@
                 }
             }
         },
+        "/guilds/{guild_id}/join": {
+            "post": {
+                "description": "Join a guild",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Join a guild",
+                "parameters": [
+                    {
+                        "description": "Join Guild Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.JoinGuildRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/me": {
             "get": {
                 "description": "Gets authenticated user profile",
@@ -571,6 +641,17 @@
                     "type": "string"
                 },
                 "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.JoinGuildRequest": {
+            "type": "object",
+            "required": [
+                "profile_id"
+            ],
+            "properties": {
+                "profile_id": {
                     "type": "integer"
                 }
             }

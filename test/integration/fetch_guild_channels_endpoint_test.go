@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/internal/validation"
 )
@@ -388,8 +389,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("`test` is not a valid page", data.Message)
@@ -423,8 +424,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("user_profile").Error(), data.Message)
@@ -458,8 +459,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("user").Error(), data.Message)
@@ -495,8 +496,8 @@ func (s *Suite) Test_FetchGuildChannelsEndpoint() {
 
 		s.Equal(http.StatusUnauthorized, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewUnauthorizedErr().Error(), data.Message)

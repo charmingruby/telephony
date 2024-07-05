@@ -6,7 +6,7 @@ import (
 	userUc "github.com/charmingruby/telephony/internal/domain/user/usecase"
 
 	"github.com/charmingruby/telephony/internal/infra/security/token"
-	"github.com/charmingruby/telephony/internal/infra/transport/rest/middleware"
+	"github.com/charmingruby/telephony/internal/infra/transport/common/middleware"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

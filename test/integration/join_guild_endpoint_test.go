@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/internal/validation"
 )
@@ -39,8 +40,8 @@ func (s *Suite) Test_JoinGuildEndpoint() {
 
 		s.Equal(http.StatusOK, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("user joined to the guild successfully", data.Message)
@@ -79,8 +80,8 @@ func (s *Suite) Test_JoinGuildEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("user profile is already a member", data.Message)
@@ -114,8 +115,8 @@ func (s *Suite) Test_JoinGuildEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("user_profile").Error(), data.Message)
@@ -149,8 +150,8 @@ func (s *Suite) Test_JoinGuildEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("user").Error(), data.Message)
@@ -186,8 +187,8 @@ func (s *Suite) Test_JoinGuildEndpoint() {
 
 		s.Equal(http.StatusUnauthorized, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewUnauthorizedErr().Error(), data.Message)

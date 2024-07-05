@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 )
 
@@ -24,8 +25,8 @@ func (s *Suite) Test_RegisterEndpoint() {
 
 		s.Equal(http.StatusCreated, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("user created successfully", data.Message)
@@ -48,8 +49,8 @@ func (s *Suite) Test_RegisterEndpoint() {
 
 		s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("invalid email format", data.Message)
@@ -67,8 +68,8 @@ func (s *Suite) Test_RegisterEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, data.Code)

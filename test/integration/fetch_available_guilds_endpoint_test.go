@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 )
 
@@ -258,8 +259,8 @@ func (s *Suite) Test_FetchAvailableGuildsEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("`test` is not a valid page", data.Message)

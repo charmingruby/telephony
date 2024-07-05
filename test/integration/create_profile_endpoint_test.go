@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
+	"github.com/charmingruby/telephony/internal/infra/transport/common/middleware"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
-	"github.com/charmingruby/telephony/internal/infra/transport/rest/middleware"
 	"github.com/charmingruby/telephony/internal/validation"
 )
 
@@ -32,8 +33,8 @@ func (s *Suite) Test_CreateProfileEndpoint() {
 
 		s.Equal(http.StatusCreated, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("user profile created successfully", data.Message)
@@ -78,8 +79,8 @@ func (s *Suite) Test_CreateProfileEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, data.Code)
@@ -114,8 +115,8 @@ func (s *Suite) Test_CreateProfileEndpoint() {
 
 		s.Equal(http.StatusConflict, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewConflictErr("user profile", "display_name").Error(), data.Message)
@@ -145,8 +146,8 @@ func (s *Suite) Test_CreateProfileEndpoint() {
 
 		s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewValidationErr(validation.ErrMinLength("displayname", "4")).Error(), data.Message)

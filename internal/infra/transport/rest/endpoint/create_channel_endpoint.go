@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
@@ -27,21 +28,21 @@ type CreateChannelRequest struct {
 //	@Failure		500		{object}	Response
 //	@Router			/guilds/{guild_id}/channels [post]
 func (h *Handler) createChannelEndpoint(c *gin.Context) {
-	userID, err := getCurrentUser(c)
+	userID, err := connhelper.GetCurrentUser(c)
 	if err != nil {
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	guildID, err := getParamID(c, "guild_id")
+	guildID, err := connhelper.GetParamID(c, "guild_id")
 	if err != nil {
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
 	var req CreateChannelRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
+		connhelper.NewPayloadError(c, err)
 		return
 	}
 
@@ -55,31 +56,31 @@ func (h *Handler) createChannelEndpoint(c *gin.Context) {
 	if err := h.guildService.CreateChannel(dto); err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
-			NewResourceNotFoundError(c, notFoundErr)
+			connhelper.NewResourceNotFoundError(c, notFoundErr)
 			return
 		}
 
 		unauthorizedErr, ok := err.(*validation.ErrUnathorized)
 		if ok {
-			NewUnauthorizedErr(c, unauthorizedErr.Error())
+			connhelper.NewUnauthorizedErr(c, unauthorizedErr.Error())
 			return
 		}
 
 		conflictErr, ok := err.(*validation.ErrConflict)
 		if ok {
-			NewConflicError(c, conflictErr)
+			connhelper.NewConflicError(c, conflictErr)
 			return
 		}
 
 		validationErr, ok := err.(*validation.ErrValidation)
 		if ok {
-			NewEntityError(c, validationErr)
+			connhelper.NewEntityError(c, validationErr)
 			return
 		}
 
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	NewCreatedResponse(c, "channel")
+	connhelper.NewCreatedResponse(c, "channel")
 }

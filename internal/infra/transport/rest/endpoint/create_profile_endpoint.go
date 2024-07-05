@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"github.com/charmingruby/telephony/internal/domain/user/dto"
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
@@ -26,15 +27,15 @@ type CreateProfileRequest struct {
 //	@Failure		500		{object}	Response
 //	@Router			/me/profile [post]
 func (h *Handler) createProfileEndpoint(c *gin.Context) {
-	userID, err := getCurrentUser(c)
+	userID, err := connhelper.GetCurrentUser(c)
 	if err != nil {
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
 	var req CreateProfileRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		NewPayloadError(c, err)
+		connhelper.NewPayloadError(c, err)
 		return
 	}
 
@@ -47,25 +48,25 @@ func (h *Handler) createProfileEndpoint(c *gin.Context) {
 	if err := h.userService.CreateProfile(dto); err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
-			NewResourceNotFoundError(c, notFoundErr)
+			connhelper.NewResourceNotFoundError(c, notFoundErr)
 			return
 		}
 
 		conflictErr, ok := err.(*validation.ErrConflict)
 		if ok {
-			NewConflicError(c, conflictErr)
+			connhelper.NewConflicError(c, conflictErr)
 			return
 		}
 
 		validationErr, ok := err.(*validation.ErrValidation)
 		if ok {
-			NewEntityError(c, validationErr)
+			connhelper.NewEntityError(c, validationErr)
 			return
 		}
 
-		NewInternalServerError(c, err)
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	NewCreatedResponse(c, "user profile")
+	connhelper.NewCreatedResponse(c, "user profile")
 }

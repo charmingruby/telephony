@@ -84,6 +84,13 @@ definitions:
       status_code:
         type: integer
     type: object
+  endpoint.JoinGuildRequest:
+    properties:
+      profile_id:
+        type: integer
+    required:
+    - profile_id
+    type: object
   endpoint.MeResponse:
     properties:
       data:
@@ -426,6 +433,52 @@ paths:
       summary: Creates a channel
       tags:
       - Channels
+  /guilds/{guild_id}/join:
+    post:
+      consumes:
+      - application/json
+      description: Join a guild
+      parameters:
+      - description: Join Guild Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.JoinGuildRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/endpoint.Response'
+      summary: Join a guild
+      tags:
+      - Members
   /me:
     get:
       consumes:

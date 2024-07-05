@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
 	"github.com/charmingruby/telephony/internal/validation"
 )
@@ -38,8 +39,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusCreated, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal("guild created successfully", data.Message)
@@ -74,8 +75,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("user_profile").Error(), data.Message)
@@ -104,8 +105,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusNotFound, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewNotFoundErr("user").Error(), data.Message)
@@ -140,8 +141,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusUnauthorized, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewUnauthorizedErr().Error(), data.Message)
@@ -176,8 +177,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusConflict, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(validation.NewConflictErr("guild", "name").Error(), data.Message)
@@ -215,8 +216,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusUnprocessableEntity, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(http.StatusUnprocessableEntity, data.Code)
@@ -248,8 +249,8 @@ func (s *Suite) Test_CreateGuildEndpoint() {
 
 		s.Equal(http.StatusBadRequest, res.StatusCode)
 
-		var data endpoint.Response
-		err = parsePayload[endpoint.Response](&data, res.Body)
+		var data connhelper.Response
+		err = parsePayload[connhelper.Response](&data, res.Body)
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, data.Code)

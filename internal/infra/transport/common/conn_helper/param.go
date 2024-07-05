@@ -1,4 +1,4 @@
-package endpoint
+package connhelper
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getCurrentUser(c *gin.Context) (int, error) {
+func GetCurrentUser(c *gin.Context) (int, error) {
 	userID, exists := c.Get("user_id")
 	if !exists {
 		return -1, errors.New("user_id not found from token")
@@ -23,7 +23,7 @@ func getCurrentUser(c *gin.Context) (int, error) {
 	return userIDParsed, nil
 }
 
-func getParamID(c *gin.Context, identifier string) (int, error) {
+func GetParamID(c *gin.Context, identifier string) (int, error) {
 	paramID := c.Param(identifier)
 
 	id, err := strconv.Atoi(paramID)
@@ -34,7 +34,7 @@ func getParamID(c *gin.Context, identifier string) (int, error) {
 	return id, nil
 }
 
-func getPage(c *gin.Context) (int, error) {
+func GetPage(c *gin.Context) (int, error) {
 	var page int
 
 	pageParams := c.DefaultQuery("page", "1")

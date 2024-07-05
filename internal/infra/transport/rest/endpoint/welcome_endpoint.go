@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,5 +14,5 @@ import (
 //	@Success		200	{object}	Response
 //	@Router			/welcome [get]
 func welcomeEndpoint(c *gin.Context) {
-	NewOkResponse(c, "OK!", nil)
+	connhelper.NewOkResponse(c, "OK!", nil)
 }
