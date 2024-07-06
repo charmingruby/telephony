@@ -6,29 +6,29 @@ import (
 	"github.com/charmingruby/telephony/internal/validation"
 )
 
-func (s *GuildService) CreateChannel(dto dto.CreateChannelDTO) error {
+func (s *GuildService) CreateChannel(dto dto.CreateChannelDTO) (int, error) {
 	if err := s.userProfileValidation(
 		dto.ProfileID,
 		dto.UserID,
 	); err != nil {
-		return err
+		return -1, err
 	}
 
 	guild, err := s.guildRepo.FindByID(dto.GuildID)
 	if err != nil {
-		return validation.NewNotFoundErr("guild")
+		return -1, validation.NewNotFoundErr("guild")
 	}
 
 	if _, err := s.memberRepo.IsAGuildMember(dto.ProfileID, dto.UserID, dto.GuildID); err != nil {
-		return validation.NewUnauthorizedErr()
+		return -1, validation.NewUnauthorizedErr()
 	}
 
 	if guild.OwnerID != dto.ProfileID {
-		return validation.NewUnauthorizedErr()
+		return -1, validation.NewUnauthorizedErr()
 	}
 
 	if _, err := s.channelRepo.FindByName(dto.GuildID, dto.Name); err == nil {
-		return validation.NewConflictErr("channel", "name")
+		return -1, validation.NewConflictErr("channel", "name")
 	}
 
 	channel, err := entity.NewChannel(
@@ -37,16 +37,17 @@ func (s *GuildService) CreateChannel(dto dto.CreateChannelDTO) error {
 		dto.ProfileID,
 	)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
-	if _, err := s.channelRepo.Store(channel); err != nil {
-		return validation.NewInternalErr()
+	channelID, err := s.channelRepo.Store(channel)
+	if err != nil {
+		return -1, validation.NewInternalErr()
 	}
 
 	if err := s.userClient.GuildJoin(dto.ProfileID); err != nil {
-		return err
+		return -1, err
 	}
 
-	return nil
+	return channelID, nil
 }

@@ -48,9 +48,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.NoError(err)
+		s.Equal(s.channelRepo.Items[0].ID, channelID)
 		s.Equal(dummyChannelName, s.channelRepo.Items[0].Name)
 	})
 
@@ -82,9 +83,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewConflictErr("channel", "name").Error(), err.Error())
 		s.Equal(1, len(s.channelRepo.Items))
 	})
@@ -111,9 +113,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewNotFoundErr("guild").Error(), err.Error())
 		s.Equal(1, len(s.channelRepo.Items))
 
@@ -135,9 +138,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewNotFoundErr("user_profile").Error(), err.Error())
 	})
 
@@ -153,9 +157,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewNotFoundErr("user").Error(), err.Error())
 	})
 
@@ -188,9 +193,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewUnauthorizedErr().Error(), err.Error())
 	})
 
@@ -218,9 +224,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewValidationErr(validation.ErrRequired("name")).Error(), err.Error())
 	})
 
@@ -257,9 +264,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewUnauthorizedErr().Error(), err.Error())
 	})
 
@@ -283,9 +291,10 @@ func (s *Suite) Test_CreateChannel() {
 			UserID:    user.ID,
 		}
 
-		err = s.guildService.CreateChannel(dto)
+		channelID, err := s.guildService.CreateChannel(dto)
 
 		s.Error(err)
+		s.Equal(-1, channelID)
 		s.Equal(validation.NewUnauthorizedErr().Error(), err.Error())
 	})
 }

@@ -53,7 +53,7 @@ func (h *Handler) createChannelEndpoint(c *gin.Context) {
 		UserID:    userID,
 	}
 
-	if err := h.guildService.CreateChannel(dto); err != nil {
+	if _, err := h.guildService.CreateChannel(dto); err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
 			connhelper.NewResourceNotFoundError(c, notFoundErr)
