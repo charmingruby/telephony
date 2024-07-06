@@ -27,7 +27,7 @@ type CreateChannelRequest struct {
 //	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
 //	@Router			/guilds/{guild_id}/channels [post]
-func (ws *WebSocketHandler) createChannelEndpoint(c *gin.Context) {
+func (h *WebSocketHandler) createChannelEndpoint(c *gin.Context) {
 	userID, err := connhelper.GetCurrentUser(c)
 	if err != nil {
 		connhelper.NewInternalServerError(c, err)
@@ -53,7 +53,7 @@ func (ws *WebSocketHandler) createChannelEndpoint(c *gin.Context) {
 		UserID:    userID,
 	}
 
-	if err := ws.hub.GuildService.CreateChannel(dto); err != nil {
+	if _, err := h.guildService.CreateChannel(dto); err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
 			connhelper.NewResourceNotFoundError(c, notFoundErr)
