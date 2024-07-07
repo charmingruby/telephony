@@ -11,6 +11,7 @@ import (
 const (
 	createChannel         = "create channel"
 	findChannelByName     = "find channel by name"
+	findChannelByID       = "find channel by id"
 	listChannelsByGuildID = "list channels by guild_id"
 )
 
@@ -22,6 +23,8 @@ func channelQueries() map[string]string {
 		RETURNING *`,
 		findChannelByName: `SELECT * FROM channels
 		WHERE guild_id = $1 AND name = $2 AND deleted_at IS NULL`,
+		findChannelByID: `SELECT * FROM channels
+		WHERE guild_id = $1 AND id = $2 AND deleted_at IS NULL`,
 		listChannelsByGuildID: `SELECT * FROM channels 
 		WHERE guild_id = $1 AND deleted_at IS NULL
 		LIMIT $2 
@@ -93,6 +96,20 @@ func (r *PostgresChannelRepository) FindByName(guildID int, name string) (*entit
 
 	var channel entity.Channel
 	if err := stmt.Get(&channel, guildID, name); err != nil {
+		return nil, err
+	}
+
+	return &channel, nil
+}
+
+func (r *PostgresChannelRepository) FindByID(channelID, guildID int) (*entity.Channel, error) {
+	stmt, err := r.statement(findChannelByID)
+	if err != nil {
+		return nil, err
+	}
+
+	var channel entity.Channel
+	if err := stmt.Get(&channel, guildID, channelID); err != nil {
 		return nil, err
 	}
 

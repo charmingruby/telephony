@@ -31,6 +31,16 @@ func (r *InMemoryChannelRepository) FindByName(guildID int, name string) (*entit
 	return nil, validation.NewNotFoundErr("channel")
 }
 
+func (r *InMemoryChannelRepository) FindByID(channelID, guildID int) (*entity.Channel, error) {
+	for _, e := range r.Items {
+		if e.ID == channelID && e.GuildID == guildID {
+			return &e, nil
+		}
+	}
+
+	return nil, validation.NewNotFoundErr("channel")
+}
+
 func (r *InMemoryChannelRepository) ListChannelsByGuildID(guildID, page int) ([]entity.Channel, error) {
 	channels := []entity.Channel{}
 
