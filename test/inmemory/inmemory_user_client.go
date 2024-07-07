@@ -1,6 +1,9 @@
 package inmemory
 
-import "github.com/charmingruby/telephony/internal/domain/user/entity"
+import (
+	"github.com/charmingruby/telephony/internal/domain/user/entity"
+	"github.com/charmingruby/telephony/internal/validation"
+)
 
 func NewInMemoryUserProfileClient(
 	profileRepo *InMemoryUserProfileRepository,
@@ -27,6 +30,15 @@ func (c *InMemoryUserProfileClient) ProfileExists(id int) bool {
 func (c *InMemoryUserProfileClient) UserExists(id int) bool {
 	_, err := c.UserRepo.FindByID(id)
 	return err == nil
+}
+
+func (c *InMemoryUserProfileClient) GetDisplayName(profileID int) (string, error) {
+	profile, err := c.ProfileRepo.FindByID(profileID)
+	if err != nil {
+		return "", validation.NewNotFoundErr("profile")
+	}
+
+	return profile.DisplayName, nil
 }
 
 func (c *InMemoryUserProfileClient) IsTheProfileOwner(userID, profileID int) bool {

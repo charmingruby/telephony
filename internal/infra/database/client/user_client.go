@@ -1,6 +1,9 @@
 package client
 
-import "github.com/charmingruby/telephony/internal/infra/database"
+import (
+	"github.com/charmingruby/telephony/internal/infra/database"
+	"github.com/charmingruby/telephony/internal/validation"
+)
 
 func NewUserClient(
 	profileRepo *database.PostgresUserProfileRepository,
@@ -20,6 +23,15 @@ type UserClient struct {
 func (c *UserClient) UserExists(id int) bool {
 	_, err := c.userRepo.FindByID(id)
 	return err == nil
+}
+
+func (c *UserClient) GetDisplayName(profileID int) (string, error) {
+	profile, err := c.profileRepo.FindByID(profileID)
+	if err != nil {
+		return "", validation.NewNotFoundErr("profile")
+	}
+
+	return profile.DisplayName, nil
 }
 
 func (c *UserClient) ProfileExists(id int) bool {
