@@ -15,7 +15,7 @@ Content-Type: application/json
 {
     "first_name": "dummy example",
     "last_name": "dummy example",
-    "email": "dummy@email.com",
+    "email": "change@dummy.com",
     "password": "password123"
 }
 
@@ -26,7 +26,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "dummy@email.com",
+    "email": "change@dummy.com",
     "password": "password123"
 }
 
@@ -44,8 +44,8 @@ Authorization: Bearer {{accessToken}}
 
 {
   "bio": "short bio",
-  "display_name": "dummy_nick",
-  "user_id": 1
+  "display_name": "dummy user 2",
+  "user_id": 2
 }
 
 ###
@@ -55,7 +55,54 @@ POST {{baseUrl}}/guilds
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "dummy name 2",
+  "name": "dummy guild",
   "description": "dummy descrption",
+  "profile_id": 1
+}
+
+###
+
+# @name fetch_guilds
+GET {{baseUrl}}/guilds
+Authorization: Bearer {{accessToken}}
+
+###
+
+# @name fetch_guild_channels
+GET {{baseUrl}}/guilds/1/channels
+Authorization: Bearer {{accessToken}}
+
+{
+  "profile_id": 2
+}
+
+###
+
+# @name create_channel
+POST {{baseUrl}}/ws/guilds/1/channels
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "dummy ch",
+  "profile_id": 1
+}
+
+###
+
+# @name join_guild
+POST {{baseUrl}}/guilds/1/join
+Authorization: Bearer {{accessToken}}
+
+{
+  "profile_id": 2
+}
+
+###
+
+# @name join_channel
+POST {{baseUrl}}/ws/guilds/3/channels/:channel_id/join
+Authorization: Bearer {{accessToken}}
+
+{
   "profile_id": 1
 }
