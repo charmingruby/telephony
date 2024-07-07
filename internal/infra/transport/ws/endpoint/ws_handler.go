@@ -15,7 +15,10 @@ func NewWSHandler(
 	hub *ws.Hub,
 ) *WebSocketHandler {
 	return &WebSocketHandler{
-		hub: hub,
+		hub:          hub,
+		router:       router,
+		guildService: guildService,
+		token:        token,
 	}
 }
 
@@ -29,8 +32,9 @@ type WebSocketHandler struct {
 func (h *WebSocketHandler) Register() {
 	basePath := "/api/v1/ws"
 
-	v1 := h.router.Group(basePath)
+	ws := h.router.Group(basePath)
 	{
-		v1.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
+		ws.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
+		ws.GET("/guilds/:guild_id/channels/:channel_id/join", middleware.AuthMiddleware(h.token), h.joinChannelEndpoint)
 	}
 }
