@@ -12,7 +12,6 @@ func GetCurrentUser(c *gin.Context) (int, error) {
 	userID, exists := c.Get("user_id")
 	if !exists {
 		return -1, errors.New("user_id not found from token")
-
 	}
 
 	userIDParsed, ok := userID.(int)
@@ -54,4 +53,14 @@ func GetPage(c *gin.Context) (int, error) {
 	}
 
 	return page, nil
+}
+
+func GetQueryValue(c *gin.Context, key string) (string, error) {
+	v := c.Query(key)
+
+	if v == "" {
+		return v, fmt.Errorf("query param not found on key `%s`", key)
+	}
+
+	return v, nil
 }
