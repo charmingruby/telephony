@@ -20,7 +20,9 @@ import (
 	"github.com/charmingruby/telephony/internal/infra/security/cryptography"
 	"github.com/charmingruby/telephony/internal/infra/security/token"
 	"github.com/charmingruby/telephony/internal/infra/transport/rest"
-	"github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
+	restEp "github.com/charmingruby/telephony/internal/infra/transport/rest/endpoint"
+	"github.com/charmingruby/telephony/internal/infra/transport/ws"
+	wsEp "github.com/charmingruby/telephony/internal/infra/transport/ws/endpoint"
 	"github.com/charmingruby/telephony/pkg/postgres"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -112,9 +114,13 @@ func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 	userClient := client.NewUserClient(profileRepo, userRepo)
 	token := token.NewJWTService(cfg.JWTConfig.SecretKey, cfg.JWTConfig.Issuer)
 	crypto := cryptography.NewCryptography()
+	hub := ws.NewHub()
 
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
 	guildSvc := guildUc.NewGuildService(guildRepo, guildMemberRepo, channelRepo, userClient)
 
-	endpoint.NewHandler(router, token, userSvc, guildSvc).Register()
+	restEp.NewHandler(router, token, userSvc, guildSvc).Register()
+	wsEp.NewWSHandler(router, guildSvc, token, hub).Register()
+
+	go hub.Start()
 }

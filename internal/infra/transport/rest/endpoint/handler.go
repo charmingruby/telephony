@@ -50,7 +50,7 @@ func (h *Handler) Register() {
 		v1.POST("/guilds", middleware.AuthMiddleware(h.token), h.createGuildEndpoint)
 		v1.GET("/guilds", middleware.AuthMiddleware(h.token), h.fetchAvailableGuildsEndpoint)
 
-		v1.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
+		//		v1.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
 		v1.GET("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.fetchGuildChannelsEndpoint)
 
 		v1.POST("/guilds/:guild_id/join", middleware.AuthMiddleware(h.token), h.joinGuildEndpoint)

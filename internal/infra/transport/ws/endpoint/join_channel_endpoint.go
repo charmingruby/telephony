@@ -3,13 +3,13 @@ package endpoint
 import (
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
 	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
+	"github.com/charmingruby/telephony/internal/infra/transport/ws"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
-type CreateChannelRequest struct {
-	Name      string `json:"name" binding:"required"`
-	ProfileID int    `json:"profile_id" binding:"required"`
+type JoinChannelRequest struct {
+	ProfileID int `json:"profile_id" binding:"required"`
 }
 
 // Create guild godoc
@@ -27,7 +27,7 @@ type CreateChannelRequest struct {
 //	@Failure		422		{object}	Response
 //	@Failure		500		{object}	Response
 //	@Router			/guilds/{guild_id}/channels [post]
-func (h *WebSocketHandler) createChannelEndpoint(c *gin.Context) {
+func (h *WebSocketHandler) joinChannelEndpoint(c *gin.Context) {
 	userID, err := connhelper.GetCurrentUser(c)
 	if err != nil {
 		connhelper.NewInternalServerError(c, err)
@@ -40,20 +40,27 @@ func (h *WebSocketHandler) createChannelEndpoint(c *gin.Context) {
 		return
 	}
 
-	var req CreateChannelRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		connhelper.NewPayloadError(c, err)
+	channelID, err := connhelper.GetParamID(c, "channel_id")
+	if err != nil {
+		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	dto := dto.CreateChannelDTO{
-		Name:      req.Name,
+	// var req JoinChannelRequest
+	// if err := c.ShouldBindJSON(&req); err != nil {
+	// 	connhelper.NewPayloadError(c, err)
+	// 	return
+	// }
+
+	dto := dto.JoinChannelDTO{
+		ChannelID: channelID,
 		GuildID:   guildID,
-		ProfileID: req.ProfileID,
+		ProfileID: 2,
 		UserID:    userID,
 	}
 
-	channelID, err := h.guildService.CreateChannel(dto)
+	res, err := h.guildService.JoinChannel(dto)
+
 	if err != nil {
 		notFoundErr, ok := err.(*validation.ErrNotFound)
 		if ok {
@@ -83,11 +90,14 @@ func (h *WebSocketHandler) createChannelEndpoint(c *gin.Context) {
 		return
 	}
 
-	h.hub.AddRoom(
-		channelID,
-		dto.GuildID,
-		dto.Name,
-	)
+	client, err := ws.NewClient(c, h.hub, res.DisplayName, dto.ProfileID, dto.ChannelID, dto.GuildID)
+	if err != nil {
+		connhelper.NewInternalServerError(c, err)
+		return
+	}
 
-	connhelper.NewCreatedResponse(c, "channel")
+	go client.WriteMessage()
+	client.ReadMessage(h.hub)
+
+	connhelper.NewOkResponse(c, "message sent", nil)
 }

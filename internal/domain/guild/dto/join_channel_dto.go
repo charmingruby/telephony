@@ -1,7 +1,12 @@
 package dto
 
 type JoinChannelDTO struct {
-	ProfileID string `json:"profile_id"`
-	GuildID   string `json:"guild_id"`
-	ChannelID string `json:"channel_id"`
+	UserID    int `json:"user_id"`
+	ProfileID int `json:"profile_id"`
+	GuildID   int `json:"guild_id"`
+	ChannelID int `json:"channel_id"`
+}
+
+type JoinChannelResponseDTO struct {
+	DisplayName string `json:"display_name"`
 }

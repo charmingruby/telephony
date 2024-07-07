@@ -27,7 +27,17 @@ func (s *GuildService) CreateGuild(dto dto.CreateGuildDTO) error {
 		return err
 	}
 
-	_, err = s.guildRepo.Store(guild)
+	guildID, err := s.guildRepo.Store(guild)
+	if err != nil {
+		return validation.NewInternalErr()
+	}
+
+	member, err := entity.NewGuildMember(dto.ProfileID, dto.UserID, guildID)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.memberRepo.Store(member)
 	if err != nil {
 		return validation.NewInternalErr()
 	}
