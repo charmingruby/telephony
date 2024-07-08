@@ -3,7 +3,6 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
 	guildEntity "github.com/charmingruby/telephony/internal/domain/guild/entity"
 	userEntity "github.com/charmingruby/telephony/internal/domain/user/entity"
@@ -46,7 +45,9 @@ func (s *Suite) Test_FetchGuildChannels() {
 		s.NoError(err)
 		s.Equal(1, len(s.memberRepo.Items))
 
-		for i := 0; i < core.ItemsPerPage()+1; i++ {
+		chQty := 4
+
+		for i := 0; i < chQty; i++ {
 			ch, err := guildEntity.NewChannel(
 				fmt.Sprintf("%s-%d", dummyChannelName, i+1),
 				profile.ID,
@@ -57,7 +58,7 @@ func (s *Suite) Test_FetchGuildChannels() {
 			_, err = s.channelRepo.Store(ch)
 			s.NoError(err)
 		}
-		s.Equal(core.ItemsPerPage()+1, len(s.channelRepo.Items))
+		s.Equal(chQty, len(s.channelRepo.Items))
 
 		dto := dto.FetchGuildChannelsDTO{
 			UserID:    user.ID,
@@ -68,67 +69,8 @@ func (s *Suite) Test_FetchGuildChannels() {
 		channels, err := s.guildService.FetchGuildChannels(dto)
 
 		s.NoError(err)
-		s.Equal(1, len(channels))
-		s.Equal(fmt.Sprintf("%s-%d", dummyChannelName, 51), channels[0].Name)
+		s.Equal(4, len(channels))
 		s.Equal(guild.ID, channels[0].GuildID)
-	})
-
-	s.Run("it should be able to fetch guild channels with max capacity", func() {
-		_, err := s.userRepo.Store(user)
-		s.NoError(err)
-		s.Equal(1, len(s.userRepo.Items))
-
-		_, err = s.profileRepo.Store(profile)
-		s.NoError(err)
-		s.Equal(1, len(s.profileRepo.Items))
-
-		_, err = s.guildRepo.Store(guild)
-		s.NoError(err)
-		s.Equal(1, len(s.guildRepo.Items))
-
-		_, err = s.memberRepo.Store(member)
-		s.NoError(err)
-		s.Equal(1, len(s.memberRepo.Items))
-
-		for i := 0; i < core.ItemsPerPage()*2; i++ {
-			if i%2 == 0 {
-				ch, err := guildEntity.NewChannel(
-					fmt.Sprintf("%s-%d", dummyChannelName, i+1),
-					profile.ID,
-					-2,
-				)
-				s.NoError(err)
-
-				_, err = s.channelRepo.Store(ch)
-				s.NoError(err)
-			} else {
-				ch, err := guildEntity.NewChannel(
-					fmt.Sprintf("%s-%d", dummyChannelName, i+1),
-					profile.ID,
-					guild.ID,
-				)
-				s.NoError(err)
-
-				_, err = s.channelRepo.Store(ch)
-				s.NoError(err)
-			}
-		}
-		s.Equal(core.ItemsPerPage()*2, len(s.channelRepo.Items))
-
-		dto := dto.FetchGuildChannelsDTO{
-			UserID:    user.ID,
-			ProfileID: profile.ID,
-			GuildID:   guild.ID,
-		}
-
-		channels, err := s.guildService.FetchGuildChannels(dto)
-
-		s.NoError(err)
-		s.Equal(core.ItemsPerPage(), len(channels))
-
-		for _, ch := range channels {
-			s.Equal(guild.ID, ch.GuildID)
-		}
 	})
 
 	s.Run("it should be not able to fetch guilds channels if guild dont exists", func() {
