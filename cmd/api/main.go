@@ -114,13 +114,15 @@ func initDependencies(cfg *config.Config, db *sqlx.DB, router *gin.Engine) {
 	userClient := client.NewUserClient(profileRepo, userRepo)
 	token := token.NewJWTService(cfg.JWTConfig.SecretKey, cfg.JWTConfig.Issuer)
 	crypto := cryptography.NewCryptography()
-	hub := ws.NewHub()
 
 	userSvc := userUc.NewUserService(userRepo, profileRepo, crypto)
 	guildSvc := guildUc.NewGuildService(guildRepo, guildMemberRepo, channelRepo, userClient)
 
+	hub := ws.NewHub(channelRepo)
+	hub.RegisterRooms()
+	go hub.Start()
+
 	restEp.NewHandler(router, token, userSvc, guildSvc).Register()
 	wsEp.NewWSHandler(router, guildSvc, token, hub).Register()
 
-	go hub.Start()
 }

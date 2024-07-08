@@ -1,17 +1,14 @@
 package endpoint
 
 import (
-	"github.com/charmingruby/telephony/internal/core"
+	"strconv"
+
 	"github.com/charmingruby/telephony/internal/domain/guild/dto"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	connhelper "github.com/charmingruby/telephony/internal/infra/transport/common/conn_helper"
 	"github.com/charmingruby/telephony/internal/validation"
 	"github.com/gin-gonic/gin"
 )
-
-type FetchGuildChannelsRequest struct {
-	ProfileID int `json:"profile_id"`
-}
 
 type FetchGuildChannelsResponse struct {
 	Message string           `json:"message"`
@@ -33,38 +30,35 @@ type FetchGuildChannelsResponse struct {
 // @Failure		404		{object}	Response
 // @Failure		500		{object}	Response
 // @Router			/guilds/{guild_id}/channels [get]
-func (h *Handler) fetchGuildChannelsEndpoint(c *gin.Context) {
-	guildID, err := connhelper.GetParamID(c, "guild_id")
-	if err != nil {
-		connhelper.NewBadRequestError(c, err)
-		return
-	}
-
+func (h *WebSocketHandler) getAvailableGuildChannelsEndpoint(c *gin.Context) {
 	userID, err := connhelper.GetCurrentUser(c)
 	if err != nil {
 		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	page, err := connhelper.GetPage(c)
+	guildID, err := connhelper.GetParamID(c, "guild_id")
+	if err != nil {
+		connhelper.NewInternalServerError(c, err)
+		return
+	}
+
+	strProfileID, err := connhelper.GetQueryParamValue(c, "profile")
 	if err != nil {
 		connhelper.NewBadRequestError(c, err)
 		return
 	}
 
-	var req FetchGuildChannelsRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		connhelper.NewPayloadError(c, err)
+	profileID, err := strconv.Atoi(strProfileID)
+	if err != nil {
+		connhelper.NewBadRequestError(c, err)
 		return
 	}
 
 	dto := dto.FetchGuildChannelsDTO{
 		UserID:    userID,
-		ProfileID: req.ProfileID,
+		ProfileID: profileID,
 		GuildID:   guildID,
-		Pagination: core.PaginationParams{
-			Page: page,
-		},
 	}
 
 	channels, err := h.guildService.FetchGuildChannels(dto)
@@ -81,9 +75,21 @@ func (h *Handler) fetchGuildChannelsEndpoint(c *gin.Context) {
 			return
 		}
 
+		conflictErr, ok := err.(*validation.ErrConflict)
+		if ok {
+			connhelper.NewConflicError(c, conflictErr)
+			return
+		}
+
+		validationErr, ok := err.(*validation.ErrValidation)
+		if ok {
+			connhelper.NewEntityError(c, validationErr)
+			return
+		}
+
 		connhelper.NewInternalServerError(c, err)
 		return
 	}
 
-	connhelper.NewOkResponse(c, "guild channels fetched", channels)
+	connhelper.NewOkResponse(c, "channels fetched", channels)
 }

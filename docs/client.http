@@ -15,7 +15,7 @@ Content-Type: application/json
 {
     "first_name": "dummy example",
     "last_name": "dummy example",
-    "email": "change@dummy.com",
+    "email": "dummy@dummy.com",
     "password": "password123"
 }
 
@@ -106,3 +106,15 @@ Authorization: Bearer {{accessToken}}
 {
   "profile_id": 1
 }
+
+###
+
+# @name get_channels
+GET {{baseUrl}}/ws/guilds/1/channels?profile=2
+Authorization: Bearer {{accessToken}}
+
+###
+
+# @name get_clients
+GET {{baseUrl}}/ws/guilds/1/channels/1/clients?profile=2
+Authorization: Bearer {{accessToken}}

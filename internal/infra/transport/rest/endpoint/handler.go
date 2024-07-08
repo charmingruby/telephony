@@ -40,19 +40,12 @@ func (h *Handler) Register() {
 	v1 := h.router.Group(basePath)
 	{
 		v1.GET("/welcome", welcomeEndpoint)
-
 		v1.POST("/auth/register", h.registerEndpoint)
 		v1.POST("/auth/login", h.credentialsAuthEndpoint)
-
 		v1.POST("/me/profile", middleware.AuthMiddleware(h.token), h.createProfileEndpoint)
 		v1.GET("/me", middleware.AuthMiddleware(h.token), h.meEndpoint)
-
 		v1.POST("/guilds", middleware.AuthMiddleware(h.token), h.createGuildEndpoint)
 		v1.GET("/guilds", middleware.AuthMiddleware(h.token), h.fetchAvailableGuildsEndpoint)
-
-		//		v1.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
-		v1.GET("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.fetchGuildChannelsEndpoint)
-
 		v1.POST("/guilds/:guild_id/join", middleware.AuthMiddleware(h.token), h.joinGuildEndpoint)
 	}
 

@@ -15,8 +15,7 @@ type GuildServiceContract interface {
 	CreateChannel(dto dto.CreateChannelDTO) (int, error)
 	FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]entity.Channel, error)
 	JoinChannel(dto dto.JoinChannelDTO) (*dto.JoinChannelResponseDTO, error)
-	SendMessage(dto dto.SendMessageDTO) error
-	DeleteMessage(dto dto.DeleteMessageDTO) error
+	ValidatePermissionToCheckConnectedProfilesOnChannel(dto dto.ValidatePermissionToCheckConnectedProfilesOnChannelDTO) error
 }
 
 func NewGuildService(

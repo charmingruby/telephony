@@ -168,7 +168,7 @@ func (s *Suite) Test_JoinGuildEndpoint() {
 		guild, err := createSampleGuild(profile.ID, "dummy guild name", s.guildRepo)
 		s.NoError(err)
 
-		payload := endpoint.FetchGuildChannelsRequest{
+		payload := endpoint.JoinGuildRequest{
 			ProfileID: profile.ID,
 		}
 		body, err := json.Marshal(payload)

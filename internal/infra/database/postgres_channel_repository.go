@@ -3,7 +3,6 @@ package database
 import (
 	"log/slog"
 
-	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/jmoiron/sqlx"
 )
@@ -13,6 +12,7 @@ const (
 	findChannelByName     = "find channel by name"
 	findChannelByID       = "find channel by id"
 	listChannelsByGuildID = "list channels by guild_id"
+	listAllChannels       = "list all channels"
 )
 
 func channelQueries() map[string]string {
@@ -26,9 +26,9 @@ func channelQueries() map[string]string {
 		findChannelByID: `SELECT * FROM channels
 		WHERE guild_id = $1 AND id = $2 AND deleted_at IS NULL`,
 		listChannelsByGuildID: `SELECT * FROM channels 
-		WHERE guild_id = $1 AND deleted_at IS NULL
-		LIMIT $2 
-		OFFSET $3`,
+		WHERE guild_id = $1 AND deleted_at IS NULL`,
+		listAllChannels: `SELECT * FROM channels 
+		WHERE deleted_at IS NULL`,
 	}
 }
 
@@ -116,7 +116,7 @@ func (r *PostgresChannelRepository) FindByID(channelID, guildID int) (*entity.Ch
 	return &channel, nil
 }
 
-func (r *PostgresChannelRepository) ListChannelsByGuildID(guildID, page int) ([]entity.Channel, error) {
+func (r *PostgresChannelRepository) ListChannelsByGuildID(guildID int) ([]entity.Channel, error) {
 	stmt, err := r.statement(listChannelsByGuildID)
 	if err != nil {
 		return nil, err
@@ -124,11 +124,23 @@ func (r *PostgresChannelRepository) ListChannelsByGuildID(guildID, page int) ([]
 
 	var channels []entity.Channel
 
-	realPageIdx := page - 1
-	offset := realPageIdx * core.ItemsPerPage()
-	limit := core.ItemsPerPage()
+	if err := stmt.Select(&channels, guildID); err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
 
-	if err := stmt.Select(&channels, guildID, limit, offset); err != nil {
+	return channels, nil
+}
+
+func (r *PostgresChannelRepository) ListAllChannels() ([]entity.Channel, error) {
+	stmt, err := r.statement(listAllChannels)
+	if err != nil {
+		return nil, err
+	}
+
+	var channels []entity.Channel
+
+	if err := stmt.Select(&channels); err != nil {
 		slog.Error(err.Error())
 		return nil, err
 	}

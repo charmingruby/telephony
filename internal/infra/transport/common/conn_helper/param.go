@@ -55,7 +55,7 @@ func GetPage(c *gin.Context) (int, error) {
 	return page, nil
 }
 
-func GetQueryValue(c *gin.Context, key string) (string, error) {
+func GetQueryParamValue(c *gin.Context, key string) (string, error) {
 	v := c.Query(key)
 
 	if v == "" {

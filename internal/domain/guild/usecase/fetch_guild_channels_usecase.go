@@ -23,7 +23,7 @@ func (s *GuildService) FetchGuildChannels(dto dto.FetchGuildChannelsDTO) ([]enti
 		return nil, validation.NewUnauthorizedErr()
 	}
 
-	channels, err := s.channelRepo.ListChannelsByGuildID(dto.GuildID, dto.Pagination.Page)
+	channels, err := s.channelRepo.ListChannelsByGuildID(dto.GuildID)
 	if err != nil {
 		return nil, err
 	}

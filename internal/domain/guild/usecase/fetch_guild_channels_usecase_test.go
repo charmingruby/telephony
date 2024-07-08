@@ -63,9 +63,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			UserID:    user.ID,
 			ProfileID: profile.ID,
 			GuildID:   guild.ID,
-			Pagination: core.PaginationParams{
-				Page: 2,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)
@@ -122,9 +119,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			UserID:    user.ID,
 			ProfileID: profile.ID,
 			GuildID:   guild.ID,
-			Pagination: core.PaginationParams{
-				Page: 1,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)
@@ -158,9 +152,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			UserID:    user.ID,
 			ProfileID: profile.ID,
 			GuildID:   -2,
-			Pagination: core.PaginationParams{
-				Page: 1,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)
@@ -179,9 +170,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			ProfileID: -2,
 			UserID:    user.ID,
 			GuildID:   guild.ID,
-			Pagination: core.PaginationParams{
-				Page: 1,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)
@@ -200,9 +188,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			ProfileID: profile.ID,
 			UserID:    -2,
 			GuildID:   guild.ID,
-			Pagination: core.PaginationParams{
-				Page: 1,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)
@@ -234,9 +219,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			ProfileID: otherUserProfile.ID,
 			UserID:    user.ID,
 			GuildID:   guild.ID,
-			Pagination: core.PaginationParams{
-				Page: 1,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)
@@ -263,9 +245,6 @@ func (s *Suite) Test_FetchGuildChannels() {
 			UserID:    user.ID,
 			ProfileID: profile.ID,
 			GuildID:   guild.ID,
-			Pagination: core.PaginationParams{
-				Page: 1,
-			},
 		}
 
 		channels, err := s.guildService.FetchGuildChannels(dto)

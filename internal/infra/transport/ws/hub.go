@@ -3,10 +3,11 @@ package ws
 import (
 	"net/http"
 
+	"github.com/charmingruby/telephony/internal/domain/guild/repository"
 	"github.com/gorilla/websocket"
 )
 
-func NewHub() *Hub {
+func NewHub(chRepo repository.ChannelRepository) *Hub {
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -20,8 +21,22 @@ func NewHub() *Hub {
 		Upgrader:     &upgrader,
 		RegisterCh:   make(chan *Client),
 		UnregisterCh: make(chan *Client),
-		BroadcastCh:  make(chan *Message, 5),
+		BroadcastCh:  make(chan *Message),
+		ChannelRepo:  chRepo,
 	}
+}
+
+func (h *Hub) RegisterRooms() error {
+	ch, err := h.ChannelRepo.ListAllChannels()
+	if err != nil {
+		return err
+	}
+
+	for _, c := range ch {
+		h.AddRoom(c.ID, c.GuildID, c.Name)
+	}
+
+	return nil
 }
 
 func (h *Hub) Start() {
@@ -74,4 +89,5 @@ type Hub struct {
 	RegisterCh   chan *Client
 	UnregisterCh chan *Client
 	BroadcastCh  chan *Message
+	ChannelRepo  repository.ChannelRepository
 }

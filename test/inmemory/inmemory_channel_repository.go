@@ -1,7 +1,6 @@
 package inmemory
 
 import (
-	"github.com/charmingruby/telephony/internal/core"
 	"github.com/charmingruby/telephony/internal/domain/guild/entity"
 	"github.com/charmingruby/telephony/internal/validation"
 )
@@ -41,22 +40,10 @@ func (r *InMemoryChannelRepository) FindByID(channelID, guildID int) (*entity.Ch
 	return nil, validation.NewNotFoundErr("channel")
 }
 
-func (r *InMemoryChannelRepository) ListChannelsByGuildID(guildID, page int) ([]entity.Channel, error) {
+func (r *InMemoryChannelRepository) ListChannelsByGuildID(guildID int) ([]entity.Channel, error) {
 	channels := []entity.Channel{}
 
-	pageToFilter := page - 1
-	startValue := pageToFilter * core.ItemsPerPage()
-	endValue := startValue + core.ItemsPerPage()
-
-	if startValue >= len(r.Items) {
-		return channels, nil
-	}
-
-	if endValue > len(r.Items) {
-		endValue = len(r.Items)
-	}
-
-	for i := startValue; i < endValue; i++ {
+	for i := 0; i < len(r.Items); i++ {
 		currentItem := r.Items[i]
 		if currentItem.GuildID == guildID {
 			channels = append(channels, currentItem)
@@ -64,4 +51,8 @@ func (r *InMemoryChannelRepository) ListChannelsByGuildID(guildID, page int) ([]
 	}
 
 	return channels, nil
+}
+
+func (r *InMemoryChannelRepository) ListAllChannels() ([]entity.Channel, error) {
+	return r.Items, nil
 }

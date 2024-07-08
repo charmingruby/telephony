@@ -35,6 +35,8 @@ func (h *WebSocketHandler) Register() {
 	ws := h.router.Group(basePath)
 	{
 		ws.POST("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.createChannelEndpoint)
+		ws.GET("/guilds/:guild_id/channels", middleware.AuthMiddleware(h.token), h.getAvailableGuildChannelsEndpoint)
 		ws.GET("/guilds/:guild_id/channels/:channel_id/join", middleware.AuthMiddleware(h.token), h.joinChannelEndpoint)
+		ws.GET("/guilds/:guild_id/channels/:channel_id/clients", middleware.AuthMiddleware(h.token), h.getConnectedClientsEndpoint)
 	}
 }
